@@ -3,8 +3,8 @@
 #include "graphics.h"
 
 #define MaxSprites    1024
-#define GAMEH		  320
-#define GAMEW         320
+#define GAMEH		  352
+#define GAMEW         352
 struct
 {
 	Uint32 state;
@@ -52,26 +52,26 @@ void Init_Graphics()
         exit(1);
     }
     atexit(SDL_Quit);
-    if(SDL_VideoModeOK(320, 320, 32, SDL_ANYFORMAT | SDL_HWSURFACE))
+    if(SDL_VideoModeOK(352, 352, 32, SDL_ANYFORMAT | SDL_HWSURFACE))
     {
-        S_Data.xres = 320;
-        S_Data.yres = 320;
+        S_Data.xres = 352;
+        S_Data.yres = 352;
         S_Data.depth = 32;
         Vflags = SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(320, 320, 16, SDL_ANYFORMAT | SDL_HWSURFACE))
+    else if(SDL_VideoModeOK(352, 352, 16, SDL_ANYFORMAT | SDL_HWSURFACE))
     {
-        S_Data.xres = 320;
-        S_Data.yres = 320;
+        S_Data.xres = 352;
+        S_Data.yres = 352;
         S_Data.depth = 16;
         Vflags = SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(320, 320, 16, SDL_ANYFORMAT))
+    else if(SDL_VideoModeOK(352, 352, 16, SDL_ANYFORMAT))
     {
-        S_Data.xres = 320;
-        S_Data.yres = 320;
+        S_Data.xres = 352;
+        S_Data.yres = 352;
         S_Data.depth = 16;
         Vflags = SDL_ANYFORMAT;
         HWflag = SDL_SWSURFACE;

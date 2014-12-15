@@ -35,11 +35,6 @@ enum DIR{
 	D_RIGHT, D_LEFT, D_UP, D_DOWN
 };
 
-//this is for an added game feature I wanted to add
-enum WALLSTATE{
-	W_START, W_EMPTY, W_WALL
-};
-
 typedef struct Ent{
 
 	Sprite			*sprite;
@@ -75,6 +70,7 @@ typedef struct Eff{
 	int 			w,h;
 	int 			vx,vy;
 	int 			used;
+	int 			pos;
 	void 			(*think)(struct Ent *self);
 }Effect;
 
@@ -85,6 +81,14 @@ void ClearAllEnt();
 void DrawEnt(Entity *ent);
 void DrawEnts();
 void UpdateEnt();
+
+void InitEff();
+Effect *NewEff();
+void DrawEffs();
+void DrawEff(Effect *eff);
+void DestEff(Effect *eff);
+void ClearAllEff();
+void UpdateEff();
 
 Entity *CreatePlayer(int x, int y, Sprite *sprite, );
 void 	PlayerThink(Entity *self);
@@ -100,3 +104,12 @@ void 	BulletTouch(Entity *self, Entity *other);
 Entity *CreatePowerup(int x, int y, Sprite *sprite, int timer);
 void	PowerThink(Entity *self);
 void 	PowerTouch(Entity *self, Entity *other);
+
+Entity *CreateSpawn(int x, int y, Sprite *sprite);
+void 	SpawnThink(Entity *self);
+
+Effect *CreateBGEff(int x, int y, int w, int h, Sprite *sprite, int pos);
+void 	BGThink(Effect *self);
+
+Effect *CreateLine(int x, int y, int w, int h, Sprite *sprite, int pos);
+void	LineEfThink(Effect *self);

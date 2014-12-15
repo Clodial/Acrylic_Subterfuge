@@ -60,6 +60,7 @@ void CleanUpAll(){
 
 void Init_All(){
 	//InitEnt();
+	//InitEff();
 	//InitLVl();
 	atexit(CleanUpAll);
 }
