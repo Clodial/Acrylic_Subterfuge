@@ -7,8 +7,8 @@
 #include "graphics.h"
 
 #define MAXENTITIES 1024
-#define MAXSPEED 4.0f
-#define ACCEL 0.5f
+#define SP 4
+#define MAXSPEED 16
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
@@ -108,6 +108,7 @@ void 	PowerTouch(Entity *self, Entity *other);
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
 void 	SpawnThink(Entity *self);
 
+//Effect Code
 Effect *CreateBGEff(int x, int y, int w, int h, Sprite *sprite, int pos);
 void 	BGThink(Effect *self);
 
