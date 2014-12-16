@@ -10,10 +10,6 @@
 
 //At the start of every game, the level is randomly chosen from constructed versions
 
-void CreateLevelList();
-void CreateLevel(int *lvl[TILEY][TILEX]);
 void InitLvl();
-int ChooseLvl();
-void LoadLvl(int c);
 
 #endif

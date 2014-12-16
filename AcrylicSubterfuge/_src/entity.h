@@ -6,9 +6,11 @@
 #include "SDL_keysym.h"
 #include "graphics.h"
 
-#define MAXENTITIES 1024
+#define MAXENTITIES 511
+#define MAXEFFECTS 255
 #define SP 4
 #define MAXSPEED 16
+#define LAYERS 3
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
@@ -39,6 +41,7 @@ typedef struct Ent{
 
 	Sprite			*sprite;
 	int				x,y,z;	//z represents depth (sigh)
+	int				cX,cY; //current x and current y
 	int				w,h;
 	int				vx, vy;	//speed, duh
 	int				pos;	//this is for one of the crazy powerups (haven't figured it out yet)
@@ -51,12 +54,17 @@ typedef struct Ent{
 	int				maxA;
 
 	int 			timer;
+	int				curTimer;
+
+	int				fTimer;
+	int				curFtimer;
 
 	int 			solid;
-
-	Entity 			*owner;
-	int				enemy;	//only used if SCTYPE = S_ENEMY
 	
+	int				pWeapon;
+	int				enemy;	//only used if SCTYPE = S_ENEMY
+	int 			frame;
+	int				numFrames;
 	int				used;	//	I'M NOT GONNA BLOW SHIT UP, AGAIN
 	void			(*think)(struct Ent *self); //do on update
 	void			(*touch)(struct Ent *self, struct Ent *other); //when enemies touch player and when bullets hit 
@@ -66,7 +74,8 @@ typedef struct Ent{
 //they are playing the game in.
 typedef struct Eff{
 	Sprite 			*sprite;
-	int 			x,y;
+	int 			x,y,z;
+	int				cX, cY;
 	int 			w,h;
 	int 			vx,vy;
 	int 			used;
@@ -74,27 +83,26 @@ typedef struct Eff{
 	void 			(*think)(struct Ent *self);
 }Effect;
 
-void InitEnt();
+void InitParts();
+void UpdateParts();
+
 Entity *NewEnt();
 void DestEnt(Entity *ent);
-void ClearAllEnt();
 void DrawEnt(Entity *ent);
 void DrawEnts();
-void UpdateEnt();
+void ClearAllEnt();
 
-void InitEff();
 Effect *NewEff();
 void DrawEffs();
 void DrawEff(Effect *eff);
 void DestEff(Effect *eff);
 void ClearAllEff();
-void UpdateEff();
 
-Entity *CreatePlayer(int x, int y, Sprite *sprite, );
+Entity *CreatePlayer(int x, int y, Sprite *sprite);
 void 	PlayerThink(Entity *self);
 void 	PlayerTouch(Entity *self, Entity *other);
 
-Entity *CreateBlock(int x, int y, Sprite *sprite));
+Entity *CreateBlock(int x, int y, Sprite *sprite);
 void BlockThink(Entity *self);
 
 Entity *CreateBullet(int x, int y, Sprite *sprite, int vx, int vy, Entity *owner, int timer);
@@ -104,6 +112,7 @@ void 	BulletTouch(Entity *self, Entity *other);
 Entity *CreatePowerup(int x, int y, Sprite *sprite, int timer);
 void	PowerThink(Entity *self);
 void 	PowerTouch(Entity *self, Entity *other);
+void 	PowerSpawn();
 
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
 void 	SpawnThink(Entity *self);
@@ -114,3 +123,5 @@ void 	BGThink(Effect *self);
 
 Effect *CreateLine(int x, int y, int w, int h, Sprite *sprite, int pos);
 void	LineEfThink(Effect *self);
+
+#endif

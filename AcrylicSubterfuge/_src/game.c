@@ -2,6 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "graphics.h"
+#include "level.h"
+#include "entity.h"
 
 /******
 /
@@ -26,7 +28,7 @@
 /
 *****/
 extern SDL_Surface *screen;
-extern SDL_Surface *buffer; /*pointer to the draw buffer*/
+extern SDL_Surface *buffer;
 extern SDL_Rect Camera;
 
 void Init_All();
@@ -34,8 +36,6 @@ void Init_All();
 SDL_Event Event;
 
 int main(int argc, char *argv[]){
-	SDL_Surface *temp;
-	SDL_Surface *bg;
 	int done;
 	int keyn;
 	int tCol;
@@ -61,6 +61,6 @@ void CleanUpAll(){
 void Init_All(){
 	//InitEnt();
 	//InitEff();
-	//InitLVl();
+	InitLvl();
 	atexit(CleanUpAll);
 }
