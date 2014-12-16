@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "graphics.h"
@@ -38,10 +40,10 @@ SDL_Event Event;
 int main(int argc, char *argv[]){
 	int done;
 	int keyn;
-	int tCol;
-	int i;
-	int ci;
 	Uint8 *keys;
+	time_t t;
+
+	srand((unsigned) time(&t));
 	Init_Graphics();
 	done = 0;
 	Init_All();

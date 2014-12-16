@@ -131,9 +131,9 @@ int *e3[11][11] ={
 void InitLvl(){
 
 	int ilvl,ieff;
-	time_t t;
+	int i,j;
+	Sprite *sprite;
 
-	srand((unsigned) time(&t));
 	ilvl = (rand()%4);
 	ieff = (rand()%3);
 	printf("ilvl: %i ieff: %i\n",ilvl,ieff);
@@ -158,4 +158,12 @@ void InitLvl(){
 	}else{
 		memcpy(eBack, *e1,sizeof(e1));
 	}
+
+	//creating the entities on the map
+	for(i = 0; i < TILEY; i++){
+		for(j = 0; j < TILEX; j++){
+		
+		}
+	}
+	//creating the back images on the map
 }
