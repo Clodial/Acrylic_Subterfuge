@@ -13,6 +13,7 @@
 #define LAYERS 3
 #define MAXWALLS 13
 #define MAXBULLETS 128
+#define MAXENEMIES 20
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
@@ -99,23 +100,30 @@ typedef struct Eff{
 	int 			used;
 	int 			pos;
 	int				curDir; //meant to change around directions and stuff
+
+	int				type;
+
+	int				curT;
+	int				timer;
+
 	void 			(*think)(struct Eff *self);
 }Effect;
 
 void InitParts();
 void UpdateParts();
+void ClearAll();
 
 Entity *NewEnt();
+Entity *NewWall();
+Entity *NewBullet();
 void DestEnt(Entity *ent);
 void DrawEnt(Entity *ent);
 void DrawEnts();
-void ClearAllEnt();
 
 Effect *NewEff();
 void DrawEffs();
 void DrawEff(Effect *eff);
 void DestEff(Effect *eff);
-void ClearAllEff();
 
 Entity *CreatePlayer(int x, int y, Sprite *sprite, int nF);
 void 	PlayerThink(Entity *self);
@@ -130,7 +138,7 @@ Entity *NewBull();
 void	BulletThink(Entity *self);
 void 	BulletTouch(Entity *self, Entity *other);
 
-Entity *CreatePowerup(int x, int y, Sprite *sprite, int timer, int type);
+Entity *CreatePowerup(int x, int y);
 void	PowerThink(Entity *self);
 void 	PowerTouch(Entity *self, Entity *other);
 void 	PowerSpawn();
@@ -147,7 +155,7 @@ void 	BGThink(Effect *self);
 Effect *CreateLine(int x, int y, Sprite *sprite, int vx);
 void	LineEfThink(Effect *self);
 
-Effect *CreateSpecial(int x, int y, Sprite *sprite); //for level 6 and whitewashes
+Effect *CreateSpecial(int x, int y, Sprite *sprite, int timer, int type); //for level 6 and whitewashes
 void	SpecThink(Effect *self);
 //extra functions
 int placeFree(int x, int y);//GAMEMAKER, no seriously... GAMEMAKER

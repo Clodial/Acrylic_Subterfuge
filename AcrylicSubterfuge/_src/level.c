@@ -135,7 +135,7 @@ void InitLvl(){
 	int ilvl,ieff;
 	int i,j;
 	Sprite *sprite;
-	Entity *ent;
+	Entity *ent, *ent2;
 	Effect *eff;
 
 	numSpawns = 0;
@@ -177,6 +177,7 @@ void InitLvl(){
 			}else if(lvl[i][j] == 2){
 				sprite = LoadSprite("_img/spr_player.png",32,32,6);
 				ent = CreatePlayer(j*32,i*32,sprite,6);
+				//ent2 = CreatePowerup(j*32,i*32);
 			}
 		}
 	}

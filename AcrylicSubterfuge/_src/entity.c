@@ -23,7 +23,11 @@ extern int *lvl[11][11];
 Entity EntList[MAXENTITIES];
 Entity WallList[MAXWALLS];
 Entity BullList[MAXBULLETS];
+Entity EnemList[MAXENEMIES];
 Effect EffList[MAXEFFECTS];
+
+int numEnem;
+
 int numEnts;
 int numWalls;
 int numBulls;
@@ -37,9 +41,14 @@ int curPowStimer;
 int dirSwitchT;
 int curDirSwT;
 
+int curPower;
+
+int ww;
+
 Entity *playa;
 Effect *back1;
 Effect *back2;
+Entity *spn;
 
 //to be possibly externed
 int direction; //direction as follows 0 = left, 1 = up, 2 = right, 3 = down (like gamemaker)
@@ -56,8 +65,9 @@ void InitParts(){
 	numBulls = 0;
 	numEnts = 0;
 	numEffs = 0;
+	curPower = P_WHITE;
 	level = 0;
-
+	ww = 1;
 	for(i = 0; i < MAXENTITIES; i++){
 		EntList[i].sprite = NULL;
 		EntList[i].think = NULL;
@@ -82,7 +92,8 @@ void InitParts(){
 void UpdateParts(){
 	//will also contain the spawning code
 	int i;
-
+	Effect *ef;
+	Sprite *spr;
 	//curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
@@ -91,7 +102,11 @@ void UpdateParts(){
 		}
 		curDirSwT = 0;
 	}
-
+	if(curPower == P_WHITE && level < 5 && ww == 1){
+		spr = LoadSprite("_img/spr_w.png",352,352,1);
+		ef = CreateSpecial(0,0,spr,120,P_WHITE);
+		ww = 0;
+	}
 	for(i = 0; i < MAXENTITIES; i++){
 		if(EntList[i].used){
 			if(EntList[i].think != NULL){
@@ -195,11 +210,42 @@ void DestEnt(Entity *ent){
 	}
 	ent->sprite = NULL;
 }
-void ClearAllEnt(){
+void DestBull(Entity *ent){
+	ent->used = 0;
+	numBulls--;
+	if(ent->sprite != NULL){
+		FreeSprite(ent->sprite);
+	}
+	ent->sprite = NULL;
+}
+void DestWalls(Entity *ent){
+	ent->used = 0;
+	numWalls--;
+	if(ent->sprite != NULL){
+		FreeSprite(ent->sprite);
+	}
+	ent->sprite = NULL;
+}
+void ClearAll(){
 	int i;
 	for(i = 0;i < MAXENTITIES; i++){
 		if(EntList[i].used != 0){
 			DestEnt(&EntList[i]);
+		}
+	}
+	for(i = 0;i < MAXWALLS; i++){
+		if(WallList[i].used != 0){
+			DestEnt(&WallList[i]);
+		}
+	}
+	for(i = 0;i < MAXBULLETS; i++){
+		if(BullList[i].used != 0){
+			DestEnt(&BullList[i]);
+		}
+	}
+	for(i = 0;i < MAXEFFECTS; i++){
+		if(EffList[i].used != 0){
+			DestEff(&EffList[i]);
 		}
 	}
 }
@@ -242,15 +288,6 @@ void DestEff(Effect *eff){
 	}
 	eff->sprite = NULL;
 }
-void ClearAllEff(){
-	int i;
-	for(i = 0;i < MAXEFFECTS; i++){
-		if(EffList[i].used != 0){
-			DestEff(&EffList[i]);
-		}
-	}
-}
-
 //Create Entity functions
 Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	Entity *player;
@@ -262,6 +299,8 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->w = 32;
 	player->h = 32;
 	player->z = 1;
+	
+	player->power = P_NORM;
 	player->type = S_PLAYER;
 
 	player->hp = 10;
@@ -276,7 +315,6 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->powLen = 0;
 	player->think = PlayerThink;
 	playa = player;
-	printf("created player \n");
 	return player;
 }
 Entity *CreateBlock(int x, int y, Sprite *s){
@@ -292,11 +330,13 @@ Entity *CreateBlock(int x, int y, Sprite *s){
 	wall->frame = 0;
 	wall->type = S_WALL;
 	wall->solid = 1;
-	printf("created block \n");
 	return wall;
 }
 Entity *CreateBullet(int x, int y, Sprite *s, int vx, int vy, int timer, int type){
 	Entity *bull;
+	Sprite *spr;
+	Entity *nB;
+
 	bull = NewBull();
 	if(bull == NULL) return bull;
 	bull->sprite = s;
@@ -311,24 +351,36 @@ Entity *CreateBullet(int x, int y, Sprite *s, int vx, int vy, int timer, int typ
 	bull->timer = timer;
 	bull->weapon = type;
 	bull->type = S_BULLET;
+	if(bull->weapon == P_LASER){
+		spr = LoadSprite("_img/spr_bPL.png",16,16,1);
+		if(vx > 0){
+			nB = CreateBullet(bull->x+16,bull->y,spr,4,0,30,P_LASER);
+		}else if(vx < 0){
+			nB = CreateBullet(bull->x-16,bull->y,spr,-4,0,30,P_LASER);
+		}else if(vy > 0){
+			nB = CreateBullet(bull->x,bull->y+16,spr,0,4,30,P_LASER);
+		}else if(vy < 0){
+			nB = CreateBullet(bull->x,bull->y-16,spr,0,-4,30,P_LASER);
+		}
+	}
 	bull->think = BulletThink;
 	bull->frame = 0;
 	return bull;
 }
-Entity *CreatePowerup(int x, int y, Sprite *s, int timer, int type){
+Entity *CreatePowerup(int x, int y){
 	Entity *pow;
 	pow = NewEnt();
 	if(pow == NULL) return pow;
 	pow->x = x;
 	pow->y = y;
-	pow->sprite = s;
 	pow->w = 16;
 	pow->h = 16;
 	pow->z = 0;
-	pow->timer = timer;
-	pow->power = type;
+	pow->timer = 120;
+	pow->curTimer = 0;
 	pow->type = S_POWER;
 	pow->frame = 0;
+	pow->think = PowerThink;
 	return pow;
 }
 Entity *CreateSpawn(int x, int y, Sprite *s){
@@ -342,9 +394,9 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 	spawn->w = 32;
 	spawn->h = 32;
 	spawn->frame = 0;
-	spawn->spTimer = 120;
-	spawn->curSpT = 0;
-	printf("created spawn \n");
+	spawn->timer = 120;
+	spawn->curTimer = 0;
+	spawn->curTimer = 0;
 	return spawn;
 }
 Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
@@ -397,15 +449,138 @@ void PlayerThink(Entity *self){
 		}
 		self->curFtimer = 0;
 	}
+	if(self->power != curPower && level != 5){
+		if(curPower != P_LVLU && curPower != P_LVLD){
+			FreeSprite(self->sprite);
+			if(curPower == P_NORM){
+				self->sprite = LoadSprite("_img/spr_player.png",32,32,6);
+			}else if(curPower == P_ROCK){
+				self->sprite = LoadSprite("_img/spr_pRock.png",32,32,6);
+			}else if(curPower == P_SHOT){
+				self->sprite = LoadSprite("_img/spr_pShot.png",32,32,6);
+			}else if(curPower == P_MINE){
+				self->sprite = LoadSprite("_img/spr_pMine.png",32,32,6);
+			}else if(curPower == P_LASER){
+				self->sprite = LoadSprite("_img/spr_pLaser.png",32,32,6);
+			}else if(curPower == P_KEEP){
+				self->sprite = LoadSprite("_img/spr_pSame.png",32,32,6);
+			}else if(curPower == P_WHITE){
+				self->sprite = LoadSprite("_img/spr_pWhite.png",32,32,6);
+			}
+		}
+		self->power = curPower;
+	}
 }
 void BulletThink(Entity *ent){
-	if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
-		DestEnt(ent);
-	}
-	ent->x += ent->vx;
-	ent->y += ent->vy;
-}
 
+	Sprite *spr;
+	Entity *e;
+
+	if(ent->weapon == W_NORM){
+		if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+			DestBull(ent);
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->weapon == W_ROCK){
+		if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+			spr = LoadSprite("_img/spr_bP.png",16,16,1);
+			if(ent->vx > 0){
+				e = CreateBullet(ent->x-16,ent->y,spr,0,4,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,2,2,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,0,-4,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,-2,-2,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,4,0,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,2,-2,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,-4,0,40,W_NORM);
+				e = CreateBullet(ent->x-16,ent->y,spr,-2,2,40,W_NORM);
+			}else if(ent->vx < 0){
+				e = CreateBullet(ent->x+16,ent->y,spr,0,4,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,2,2,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,0,-4,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,-2,-2,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,4,0,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,2,-2,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,-4,0,40,W_NORM);
+				e = CreateBullet(ent->x+16,ent->y,spr,-2,2,40,W_NORM);
+			}else if(ent->vy > 0){
+				e = CreateBullet(ent->x,ent->y-16,spr,0,4,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,2,2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,0,-4,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,-2,-2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,4,0,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,2,-2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,-4,0,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y-16,spr,-2,2,40,W_NORM);
+			}else{
+				e = CreateBullet(ent->x,ent->y+16,spr,0,4,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,2,2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,0,-4,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,-2,-2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,4,0,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,2,-2,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,-4,0,40,W_NORM);
+				e = CreateBullet(ent->x,ent->y+16,spr,-2,2,40,W_NORM);
+			}
+			DestBull(ent);
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->weapon == W_LASER || ent->weapon == W_MINE){
+		ent->curTimer += 1;
+		if(ent->curTimer >= ent->timer){
+			DestBull(ent);	
+		}
+	}
+}
+void PowerThink(Entity *e){
+	int r;
+	Sprite *spr;
+	Effect *ef;
+
+	e->curTimer += 1;
+	if(e->sprite == NULL){
+		if(e->curTimer >= e->timer){
+			e->sprite = LoadSprite("_img/spr_pow.png",32,32,1);
+		}
+	}else{
+		if(e->curTimer >= e->timer){
+			if(playa->x < e->x + e->w && playa->x + playa->w > e->x && playa->y < e->y + e->h && playa->y + playa->h > e->y){
+				r = rand()%100;
+				if(r >= 0 && r <= 15){
+					curPower = P_ROCK;
+				}else if(r > 15 && r <= 55){
+					curPower = P_SHOT;
+				}else if(r > 55 && r <= 60){
+					curPower = P_MINE;
+				}else if(r > 60 && r <= 65){
+					curPower = P_LASER;
+				}else if(r > 65 && r <= 70){
+					curPower = P_KEEP;
+				}else if(r > 70 && r <= 75){
+					curPower = P_LVLU;
+					if(level < 5){
+						level += 1;
+					}else{
+						level = 0; //to be nice
+					}
+				}else if(r > 75 && r <= 80){
+					curPower = P_LVLD;
+					if(level > 0){
+						level -= 1;
+					}
+				}else{
+					curPower = P_WHITE;
+					ww = 1;
+				}
+				//FreeSprite(e->sprite);
+			}
+			e->curTimer = 0;
+		}
+	}
+
+
+}
 //Effect Create functions
 Effect *CreateBGEff(int x, int y, Sprite *s){
 	Effect *bg;
@@ -437,6 +612,26 @@ Effect *CreateLine(int x, int y,Sprite *s, int v){
 	line->sprite = s;
 	line->think = LineEfThink;
 	return line;
+}
+Effect *CreateSpecial(int x, int y, Sprite *s, int t, int type){
+	Effect *sp;
+	sp = NewEff();
+	if(sp == NULL){
+		if(curPower == P_WHITE && level != 5)
+			curPower = P_NORM;
+		return sp;
+	}
+	sp->x  = x;
+	sp->y = y;
+	sp->w = 352;
+	sp->h = 352;
+	sp->sprite = s;
+	sp->z = 2;
+	sp->type = type;
+	sp->curT = 0;
+	sp->timer = t;
+	return sp;
+
 }
 //Effect Think functions
 void BGThink(Effect *eff){
@@ -549,6 +744,15 @@ void LineEfThink(Effect *eff){
 		eff->curDir = direction;
 	}
 }
+void SpecThink(Effect *ef){
+	if(ef->type == P_WHITE){
+		ef->curT += 1;
+		if(ef->curT >= ef->timer){
+			curPower = P_NORM;
+			DestEff(ef);
+		}
+	}
+}
 int placeFree(int x, int y){
 	int cx,cy; 
 	int cx2,cy2; //to check the full length
@@ -563,7 +767,22 @@ int placeFree(int x, int y){
 	}
 	return 1;
 }
+int TouchSpawn(int x, int y){
+	int cx,cy; 
+	int cx2,cy2; //to check the full length
+
+	cx = x / 32; //get the tile that is there
+	cy = y / 32;
+	cx2 = (x + 31)/32;
+	cy2 = (y + 31)/32;
+
+	if(lvl[cy][cx] == 2 || lvl[cy][cx2] == 2 || lvl[cy2][cx] == 2 || lvl[cy2][cx2] == 2){
+		return 0;
+	}
+	return 1;
+}
 int placeFree2(int x, int y, int w, int h){
+	//basically like placeFree but meant for collision between objects not stuck to the grid
 	int cx,cy,cx2,cy2;
 	int bx,by,bw,bh;
 	int i;
