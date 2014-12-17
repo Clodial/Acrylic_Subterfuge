@@ -89,7 +89,7 @@ typedef struct Eff{
 	int 			vx,vy;
 	int 			used;
 	int 			pos;
-	void 			(*think)(struct Ent *self);
+	void 			(*think)(struct Eff *self);
 }Effect;
 
 void InitParts();
@@ -132,7 +132,7 @@ void	EnemyTouch(Entity *self, Entity *other);
 Effect *CreateBGEff(int x, int y, Sprite *sprite);
 void 	BGThink(Effect *self);
 
-Effect *CreateLine(int x, int y, int w, int h, Sprite *sprite);
+Effect *CreateLine(int x, int y, Sprite *sprite, int vx);
 void	LineEfThink(Effect *self);
 
 //extra functions

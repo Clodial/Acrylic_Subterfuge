@@ -46,6 +46,9 @@
 #define Cyan_        0x00FFFF
 #define Magenta_     0xFF00FF
 
+#define MaxSprites    1024
+#define GAMEH		  352
+#define GAMEW         352
 
 /*color constants:*/
 enum colors {Red = 1,Green = 2,Blue = 3,Yellow = 4,Orange = 5,Violet = 6,Brown = 7,Grey = 8,DarkRed = 9,DarkGreen = 10,
@@ -79,7 +82,7 @@ Sprite *LoadSwappedSprite(char *filename,int sizex, int sizey, int c1, int c2, i
 /*drawsprite and drawspritepart work the same except that Drawsprite will render an entire sprite on the desired srface
   and drawspritepart can have the size of the sprite specified.  Know your sprite when using DSP since you can in theory
   read too far, not that SDL will allow that.*/
-void DrawSprite(Sprite *sprite,SDL_Surface *surface,int sx,int sy, int frame);
+void DrawSprite(Sprite *sprite,SDL_Surface *surface,int w, int h,int sx,int sy, int frame);
 void CloseSprites();		/*call this before you exit to make sure all the memory that your program used is given back to your OS*/
 
 Uint32 IndexColor(int color);

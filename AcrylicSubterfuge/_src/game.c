@@ -37,9 +37,11 @@ int main(int argc, char *argv[]){
 	done = 0;
 	Init_All();
 	do{
+		UpdateParts();
 		SDL_PumpEvents();
 		keys = SDL_GetKeyState(&keyn);
 		ResetBuffer();
+		DrawEffs();
 		DrawEnts();
 		NextFrame();
 		if(keys[SDLK_ESCAPE]) done = 1;

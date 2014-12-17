@@ -5,6 +5,7 @@
 #include <time.h>
 #include "SDL.h"
 #include "level.h"
+#include "graphics.h"
 
 /******
 *	layers:
@@ -32,9 +33,9 @@ void InitParts(){
 	}
 	numEffs = 0;
 	for(i = 0; i < MAXEFFECTS; i++){
-		EntList[i].sprite = NULL;
-		EntList[i].think = NULL;
-		EntList[i].used = 0;
+		EffList[i].sprite = NULL;
+		EffList[i].think = NULL;
+		EffList[i].used = 0;
 	}
 }
 void UpdateParts(){
@@ -83,7 +84,7 @@ void DrawEnts(){
 }
 void DrawEnt(Entity *ent){
 	/*Frame set to 0 for testing purposes*/
-	DrawSprite(ent->sprite,screen,ent->x,ent->y,ent->frame);
+	DrawSprite(ent->sprite,screen,32,32,ent->x,ent->y,ent->frame);
 }
 void DestEnt(Entity *ent){
 	ent->used = 0;
@@ -105,15 +106,6 @@ void ClearAllEnt(){
 /******
 *	Effects
 ******/
-void InitEnt(){
-	int i;
-	numEnts = 0;
-	for(i = 0; i < MAXENTITIES; i++){
-		EffList[i].sprite = NULL;
-		EffList[i].think = NULL;
-		EffList[i].used = 0;
-	}
-}
 Effect *NewEff(){
 	int i;
 	if(numEffs + 1 >= MAXEFFECTS){
@@ -131,15 +123,15 @@ void DrawEffs(){
 	int i,j;
 	for(j = 0; j < LAYERS; j++){
 		for(i = 0; i < MAXEFFECTS;i++){
-			if(EntList[i].used && EffList[i].z == j){
-				DrawEnt(&EffList[i]);
+			if(EffList[i].used && EffList[i].z == j){
+				DrawEff(&EffList[i]);
 			}
 		}
 	}
 }
 void DrawEff(Effect *eff){
 	/*Frame set to 0 for testing purposes*/
-	DrawSprite(eff->sprite,screen,eff->x,eff->y,0);
+	DrawSprite(eff->sprite,screen,eff->w,eff->h,eff->x,eff->y,0);
 }
 void DestEff(Effect *eff){
 	eff->used = 0;
@@ -283,5 +275,46 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 //	//Determining vx and vy for enemy types E_STRT, E_DIAG, E_PHASE, E_BOX, and E_PHASE
 //	if(ent->enemy == 
 //}
-
+void PlayerThink(Entity *self){
+	
+}
 //Effect Create functions
+Effect *CreateBGEff(int x, int y, Sprite *s){
+	Effect *bg;
+	bg = NewEff();
+	if(bg == NULL) return bg;
+	bg->x = x;
+	bg->y = y;
+	bg->w = 2112;
+	bg->h = 352;
+	bg->z = 0;
+	bg->sprite = s;
+	bg->think = BGThink;
+	return bg;
+}
+Effect *CreateLine(int x, int y,Sprite *s, int vx){
+	Effect *line;
+	line = NewEff();
+	if(line == NULL) return line;
+	line->x = x;
+	line->y = y;
+	line->w = 64;
+	line->h = 16;
+	line->z = 1;
+	line->vx = vx;
+	line->sprite = s;
+	line->think = LineEfThink;
+	return line;
+}
+void BGThink(Effect *eff){
+	if(eff->x >= eff->w){
+		eff->x = -(eff->w);
+	}
+	eff->x += 8;
+}
+void LineEfThink(Effect *eff){
+	if(eff->x <= -(eff->w)){
+		eff->x = GAMEW;
+	}
+	eff->x -= eff->vx;
+}

@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include "graphics.h"
 
-#define MaxSprites    1024
-#define GAMEH		  352
-#define GAMEW         352
 struct
 {
 	Uint32 state;
@@ -268,13 +265,13 @@ void CloseSprites()
    }
 }
 
-void DrawSprite(Sprite *sprite,SDL_Surface *surface,int sx,int sy, int frame)
+void DrawSprite(Sprite *sprite,SDL_Surface *surface,int w, int h, int sx,int sy, int frame)
 {
     SDL_Rect src,dest;
     src.x = frame % sprite->framesperline * sprite->w;
 	src.y = frame / sprite->framesperline * sprite->h;
-    src.w = 32;
-    src.h = 32;
+    src.w = w;
+    src.h = w;
     dest.x = sx;
     dest.y = sy;
 	dest.w = sprite->w;
