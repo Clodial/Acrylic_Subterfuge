@@ -28,7 +28,7 @@ int main(int argc, char *argv[]){
 
 	temp = IMG_Load("_img/lvl1_horz.png");
 	if(temp != NULL){
-		bg = SDL_DisplayFormatAlpha(temp);
+		bg = SDL_DisplayFormat(temp);
 	}
 	SDL_FreeSurface(temp);
 	if(bg != NULL){
@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
 	do{
 		SDL_PumpEvents();
 		keys = SDL_GetKeyState(&keyn);
+		ResetBuffer();
 		DrawEnts();
 		NextFrame();
 		if(keys[SDLK_ESCAPE]) done = 1;
