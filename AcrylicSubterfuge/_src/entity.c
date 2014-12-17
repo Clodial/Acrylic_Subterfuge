@@ -199,6 +199,8 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->type = S_PLAYER;
 
 	player->hp = 10;
+	player->timer = 20;
+	player->curTimer = 0;
 
 	player->frame = 0;
 	player->fTimer = 10;
@@ -242,6 +244,7 @@ Entity *CreateBullet(int x, int y, Sprite *s, int vx, int vy, int timer, int typ
 	bull->timer = timer;
 	bull->weapon = type;
 	bull->type = S_BULLET;
+	bull->think = BulletThink;
 	bull->frame = 0;
 	return bull;
 }
@@ -314,7 +317,7 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 //}
 void PlayerThink(Entity *self){
 
-	self->timer += 1;
+	self->curTimer += 1;
 	self->curFtimer+= 1;
 	if(self->curFtimer >= self->fTimer){
 		//So it hits every frame in the sequence
@@ -326,7 +329,13 @@ void PlayerThink(Entity *self){
 		self->curFtimer = 0;
 	}
 }
-
+void BulletThink(Entity *ent){
+	ent->x += ent->vx;
+	ent->y += ent->vy;
+	if(!placeFree(ent->x+ent->vx,ent->y+ent->vy) || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+		DestEnt(ent);
+	}
+}
 
 //Effect Create functions
 Effect *CreateBGEff(int x, int y, Sprite *s){

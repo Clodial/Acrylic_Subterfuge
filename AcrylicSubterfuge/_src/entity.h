@@ -38,7 +38,7 @@ enum SCTYPE{
 //affects state of the game, as well
 enum POWUP{
 	//powerups can only be rockets, shotguns, mines, lasers, lvlds, whitewashes, and lvlus
-	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_LVLU, P_LVLD, P_WHITE
+	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_KEEP, P_LVLU, P_LVLD, P_WHITE 
 };
 enum DIR{
 	D_RIGHT, D_LEFT, D_UP, D_DOWN

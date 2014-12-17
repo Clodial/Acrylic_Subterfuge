@@ -38,95 +38,115 @@ int main(int argc, char *argv[]){
 		
 		if(keys[SDLK_a]){
 			if(direction == 0){
-				if(placeFree(playa->x - 2,playa->y))
+				if(placeFree(playa->x - 2,playa->y) && playa->x - 2 > 0)
 				playa->x -= 2;
 			}else if(direction == 1){
-				if(placeFree(playa->x,playa->y-2))
+				if(placeFree(playa->x,playa->y-2) && playa->y - 2 >0)
 				playa->y -= 2;
 			}else if(direction == 2){
-				if(placeFree(playa->x + 2,playa->y))
+				if(placeFree(playa->x + 2,playa->y) && playa->x + 2 < GAMEW)
 				playa->x += 2;
 			}else{
-				if(placeFree(playa->x,playa->y+2))
+				if(placeFree(playa->x,playa->y+2) && playa->y +2 <GAMEH)
 				playa->y += 2;
 			}
 		}else if(keys[SDLK_d]){
 			if(direction == 0){
-				if(placeFree(playa->x + 2,playa->y))
+				if(placeFree(playa->x + 2,playa->y) && playa->y - 2 < GAMEW)
 				playa->x += 2;
 			}else if(direction == 1){
-				if(placeFree(playa->x,playa->y+2))
+				if(placeFree(playa->x,playa->y+2) && playa->y + 2 < GAMEH)
 				playa->y += 2;
 			}else if(direction == 2){
-				if(placeFree(playa->x - 2,playa->y))
+				if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
 				playa->x -= 2;
 			}else{
-				if(placeFree(playa->x,playa->y-2))
+				if(placeFree(playa->x,playa->y-2) && playa->y-2 > 0)
 				playa->y -= 2;
 			}
 		}else if(keys[SDLK_w]){
 			if(direction == 0){
-				if(placeFree(playa->x,playa->y - 2))
+				if(placeFree(playa->x,playa->y - 2) && playa->y-2 > 0)
 				playa->y -= 2;
 			}else if(direction == 1){
-				if(placeFree(playa->x + 2,playa->y))
+				if(placeFree(playa->x + 2,playa->y) && playa->x+2 < GAMEW)
 				playa->x += 2;
 			}else if(direction == 2){
-				if(placeFree(playa->x,playa->y + 2))
+				if(placeFree(playa->x,playa->y + 2) && playa->y+2 < GAMEH)
 				playa->y += 2;
 			}else{
-				if(placeFree(playa->x - 2,playa->y))
+				if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
 				playa->x -= 2;
 			}
 		}else if(keys[SDLK_s]){
 			if(direction == 0){
-				if(placeFree(playa->x,playa->y + 2))
+				if(placeFree(playa->x,playa->y + 2) && playa->y+2 < GAMEH)
 				playa->y += 2;
 			}else if(direction == 1){
-				if(placeFree(playa->x - 2,playa->y))
+				if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
 				playa->x -= 2;
 			}else if(direction == 2){
-				if(placeFree(playa->x,playa->y - 2))
+				if(placeFree(playa->x,playa->y - 2) && playa->y-2 > 0)
 				playa->y -= 2;
 			}else{
-				if(placeFree(playa->x + 2,playa->y))
+				if(placeFree(playa->x + 2,playa->y) && playa->x+2 < GAMEW)
 				playa->x += 2;
 			}
 		}
 
 		if(keys[SDLK_LEFT]){
 			if(playa->curTimer >= playa->timer){
+				spr = LoadSprite("_img/spr_bP.png",16,16,1);
 				if(direction == 0){
+					CreateBullet(playa->x+8,playa->y+8,spr,-4,0,10,W_NORM);
 				}else if(direction == 1){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,-4,10,W_NORM);
 				}else if(direction == 2){
+					CreateBullet(playa->x+8,playa->y+8,spr,4,0,10,W_NORM);
 				}else{
+					CreateBullet(playa->x+8,playa->y+8,spr,0,4,10,W_NORM);
 				}
 				playa->curTimer = 0;
 			}
 		}else if(keys[SDLK_UP]){
 			if(playa->curTimer >= playa->timer){
+				spr = LoadSprite("_img/spr_bP.png",16,16,1);
 				if(direction == 0){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,-4,10,W_NORM);
 				}else if(direction == 1){
+					CreateBullet(playa->x+8,playa->y+8,spr,4,0,10,W_NORM);
 				}else if(direction == 2){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,4,10,W_NORM);
 				}else{
+					CreateBullet(playa->x+8,playa->y+8,spr,-4,0,10,W_NORM);
 				}
 				playa->curTimer = 0;
 			}
 		}else if(keys[SDLK_RIGHT]){
 			if(playa->curTimer >= playa->timer){
+				spr = LoadSprite("_img/spr_bP.png",16,16,1);
 				if(direction == 0){
+					CreateBullet(playa->x+8,playa->y+8,spr,4,0,10,W_NORM);
 				}else if(direction == 1){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,4,10,W_NORM);
 				}else if(direction == 2){
+					CreateBullet(playa->x+8,playa->y+8,spr,-4,0,10,W_NORM);
 				}else{
+					CreateBullet(playa->x+8,playa->y+8,spr,0,-4,10,W_NORM);
 				}
 				playa->curTimer = 0;
 			}
 		}else if(keys[SDLK_DOWN]){
 			if(playa->curTimer >= playa->timer){
+				spr = LoadSprite("_img/spr_bP.png",16,16,1);
 				if(direction == 0){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,4,10,W_NORM);
 				}else if(direction == 1){
+					CreateBullet(playa->x+8,playa->y+8,spr,-4,0,10,W_NORM);
 				}else if(direction == 2){
+					CreateBullet(playa->x+8,playa->y+8,spr,0,-4,10,W_NORM);
 				}else{
+					CreateBullet(playa->x+8,playa->y+8,spr,4,0,10,W_NORM);
 				}
 				playa->curTimer = 0;
 			}
