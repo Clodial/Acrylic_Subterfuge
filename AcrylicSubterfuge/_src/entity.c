@@ -21,8 +21,12 @@ extern Effect *bg1,*bg2;
 extern int *lvl[11][11];
 
 Entity EntList[MAXENTITIES];
+Entity WallList[MAXWALLS];
+Entity BullList[MAXBULLETS];
 Effect EffList[MAXEFFECTS];
 int numEnts;
+int numWalls;
+int numBulls;
 int numEffs;
 
 int killCount;
@@ -106,6 +110,32 @@ Entity *NewEnt(){
 	}
 	EntList[i].used = 1;
 	return &EntList[i];
+}
+Entity *NewWall(){
+	int i;
+	if(numWalls + 1 >= MAXWALLS){
+		return NULL;
+	}
+	numWalls++;
+	/*establish memory for new entity*/
+	for(i = 0;i <= numWalls; i++){
+		if(WallList[i].used == 0)break;
+	}
+	WallList[i].used = 1;
+	return &WallList[i];
+}
+Entity *NewBull(){
+	int i;
+	if(numBulls + 1 >= MAXBULLETS){
+		return NULL;
+	}
+	numBulls++;
+	/*establish memory for new entity*/
+	for(i = 0;i <= numBulls; i++){
+		if(BullList[i].used == 0)break;
+	}
+	BullList[i].used = 1;
+	return &BullList[i];
 }
 void DrawEnts(){
 	int i,j;
@@ -225,6 +255,7 @@ Entity *CreateBlock(int x, int y, Sprite *s){
 	wall->z = 2;
 	wall->frame = 0;
 	wall->type = S_WALL;
+	wall->solid = 1;
 	printf("created block \n");
 	return wall;
 }
@@ -332,9 +363,10 @@ void PlayerThink(Entity *self){
 void BulletThink(Entity *ent){
 	ent->x += ent->vx;
 	ent->y += ent->vy;
-	if(!placeFree(ent->x+ent->vx,ent->y+ent->vy) || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+	if(!placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
 		DestEnt(ent);
 	}
+	
 }
 
 //Effect Create functions
@@ -371,8 +403,6 @@ Effect *CreateLine(int x, int y,Sprite *s, int v){
 }
 //Effect Think functions
 void BGThink(Effect *eff){
-
-	Sprite *spr;
 
 	//left -> up -> right -> down (like gamemaker)
 	if(direction == eff->curDir){
@@ -442,8 +472,6 @@ void BGThink(Effect *eff){
 }
 void LineEfThink(Effect *eff){
 
-	Sprite *spr; //meant for direction changes (cuz, supah power up, yo)
-
 	if(direction == eff->curDir){
 		if(direction == 0){
 			if(eff->x <= -(eff->w)){
@@ -494,7 +522,28 @@ int placeFree(int x, int y){
 	cy2 = (y + 31)/32;
 
 	if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
-	return 0;
+		return 0;
 	}
+	return 1;
+}
+int placeFree2(int x, int y, int w, int h){
+	int cx,cy,cx2,cy2;
+	int bx,by,bw,bh;
+
+	cx = x / 32;
+	cy = y / 32;
+	cx2 = (x + 31)/32;
+	cy2 = (y + 31)/32;
+	
+	bx = cx*32;
+	by = cy*32;
+	bw = 32;
+	bh = 32;
+
+	if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
+		if(bx < x + w && bx + bw > x && by < y + h && by + bh > y)
+		return 0;
+	}
+
 	return 1;
 }

@@ -11,6 +11,8 @@
 #define SP 4
 #define MAXSPEED 16
 #define LAYERS 3
+#define MAXWALLS 12
+#define MAXBULLETS 128
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
@@ -61,6 +63,8 @@ typedef struct Ent{
 					//This might be for a version of this game that's a little easier than what is currently available here... cuz...
 	int				type;	
 	int 			hp;
+
+	int				solid;
 
 	int				power;	//current powerup
 	int				weapon; //weapon
@@ -115,9 +119,11 @@ void 	PlayerThink(Entity *self);
 void 	PlayerTouch(Entity *self, Entity *other);
 
 Entity *CreateBlock(int x, int y, Sprite *sprite);
+Entity *NewWall();
 void BlockThink(Entity *self);
 
 Entity *CreateBullet(int x, int y, Sprite *sprite, int vx, int vy, int timer, int type);
+Entity *NewBull();
 void	BulletThink(Entity *self);
 void 	BulletTouch(Entity *self, Entity *other);
 
@@ -128,7 +134,7 @@ void 	PowerSpawn();
 
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
 
-Entity *CreateEnemy(int x, int y, Sprite *sprite, int type, int nF);
+Entity *CreateEnemy(int x, int y, Sprite *sprite, int type, int nF, int hp);
 void	EnemyThink(Entity *self);
 void	EnemyTouch(Entity *self, Entity *other);
 //Effect Code
@@ -142,4 +148,5 @@ Effect *CreateSpecial(int x, int y, Sprite *sprite); //for level 6 and whitewash
 void	SpecThink(Effect *self);
 //extra functions
 int placeFree(int x, int y);//GAMEMAKER, no seriously... GAMEMAKER
+int placeFree2(int x, int y, int w, int h);
 #endif
