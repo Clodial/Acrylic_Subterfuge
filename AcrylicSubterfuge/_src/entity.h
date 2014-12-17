@@ -57,6 +57,8 @@ typedef struct Ent{
 	
 	int				dir;	//different from pos -> meant to determine what direction enemies will start out in (meant for 
 
+	int				lx,ly,rx,ry,ux,uy,dx,dy; //oh boy oh boy, this is for that one powerup
+
 	int				type;	
 	int 			hp;
 

@@ -14,18 +14,31 @@
 *
 ******/
 
+//externed variables
+extern SDL_Surface *screen;
+extern int numSpawns; //necessary for where enemies will be spawning
+
 Entity EntList[MAXENTITIES];
 Effect EffList[MAXEFFECTS];
 int numEnts;
 int numEffs;
-extern SDL_Surface *screen;
+int powSpTimer;
+int curPowStimer;
 Entity *playa;
 Effect *back1;
 Effect *back2;
 
+//to be possibly externed
+int direction;
+int level;
+
 void InitParts(){
 	int i;
+
+	direction = 0;
 	numEnts = 0;
+	level = 0;
+
 	for(i = 0; i < MAXENTITIES; i++){
 		EntList[i].sprite = NULL;
 		EntList[i].think = NULL;
@@ -164,12 +177,13 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->type = S_PLAYER;
 
 	player->hp = 10;
-	player->frame = 2;
-	player->fTimer = 1;
+	player->frame = 0;
+	player->fTimer = 10;
 	player->curFtimer = 0;
 	player->numFrames = nF;
 	//every subsequent powerup will have specified timers, I guess
 	player->powLen = 0;
+	player->think = PlayerThink;
 	playa = player;
 	printf("created player \n");
 	return player;
@@ -276,8 +290,24 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 //	if(ent->enemy == 
 //}
 void PlayerThink(Entity *self){
-	
+
+	self->curFtimer+= 1;
+	if(self->curFtimer >= self->fTimer){
+		//So it hits every frame in the sequence
+		if(self->frame < self->numFrames-1){
+			self->frame += 1;
+		}else{
+			self->frame = 0;
+		}
+		self->curFtimer = 0;
+	}
+	if(direction == 0){
+		//left
+
+	}
 }
+
+
 //Effect Create functions
 Effect *CreateBGEff(int x, int y, Sprite *s){
 	Effect *bg;
@@ -306,13 +336,21 @@ Effect *CreateLine(int x, int y,Sprite *s, int vx){
 	line->think = LineEfThink;
 	return line;
 }
+//Effect Think functions
 void BGThink(Effect *eff){
+
+	Sprite *spr;
+
+
 	if(eff->x >= eff->w){
 		eff->x = -(eff->w);
 	}
 	eff->x += 8;
 }
 void LineEfThink(Effect *eff){
+
+	Sprite *spr; //meant for direction changes (cuz, supah power up, yo)
+
 	if(eff->x <= -(eff->w)){
 		eff->x = GAMEW;
 	}

@@ -11,6 +11,8 @@ extern SDL_Surface *screen;
 extern SDL_Surface *buffer;
 extern SDL_Rect Camera;
 
+extern Entity *playa;
+
 void Init_All();
 
 SDL_Event Event;
@@ -25,21 +27,23 @@ int main(int argc, char *argv[]){
 
 	srand((unsigned) time(&t));
 	Init_Graphics();
-
-	temp = IMG_Load("_img/lvl1_horz.png");
-	if(temp != NULL){
-		bg = SDL_DisplayFormat(temp);
-	}
-	SDL_FreeSurface(temp);
-	if(bg != NULL){
-		SDL_BlitSurface(bg,NULL,buffer,NULL);
-	}
 	done = 0;
 	Init_All();
 	do{
 		UpdateParts();
 		SDL_PumpEvents();
 		keys = SDL_GetKeyState(&keyn);
+		
+		if(keys[SDLK_LEFT]){
+			playa->x -= 2;
+		}else if(keys[SDLK_RIGHT]){
+			playa->x += 2;	
+		}else if(keys[SDLK_UP]){
+			playa->y -= 2;
+		}else if(keys[SDLK_DOWN]){
+			playa->y += 2;
+		}
+
 		ResetBuffer();
 		DrawEffs();
 		DrawEnts();
@@ -55,8 +59,7 @@ void CleanUpAll(){
 }
 
 void Init_All(){
-	//InitEnt();
-	//InitEff();
+	InitParts();
 	InitLvl();
 	atexit(CleanUpAll);
 }
