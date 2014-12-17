@@ -52,7 +52,10 @@ void InitParts(){
 	direction = 0;
 	dirSwitchT = 240;
 	curDirSwT = 0;
+	numWalls = 0;
+	numBulls = 0;
 	numEnts = 0;
+	numEffs = 0;
 	level = 0;
 
 	for(i = 0; i < MAXENTITIES; i++){
@@ -60,7 +63,16 @@ void InitParts(){
 		EntList[i].think = NULL;
 		EntList[i].used = 0;
 	}
-	numEffs = 0;
+	for(i = 0; i < MAXWALLS; i++){
+		WallList[i].sprite = NULL;
+		WallList[i].think = NULL;
+		WallList[i].used = 0;
+	}
+	for(i = 0; i < MAXBULLETS; i++){
+		BullList[i].sprite = NULL;
+		BullList[i].think = NULL;
+		BullList[i].used = 0;
+	}
 	for(i = 0; i < MAXEFFECTS; i++){
 		EffList[i].sprite = NULL;
 		EffList[i].think = NULL;
@@ -71,7 +83,7 @@ void UpdateParts(){
 	//will also contain the spawning code
 	int i;
 
-	curDirSwT += 1;
+	//curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
 		if(direction > 3){
@@ -84,6 +96,20 @@ void UpdateParts(){
 		if(EntList[i].used){
 			if(EntList[i].think != NULL){
 				EntList[i].think(&EntList[i]);
+			}
+		}
+	}
+	for(i = 0; i < MAXBULLETS;i++){
+		if(BullList[i].used){
+			if(BullList[i].think != NULL){
+				BullList[i].think(&BullList[i]);
+			}
+		}
+	}
+	for(i = 0; i < MAXWALLS;i++){
+		if(WallList[i].used){
+			if(WallList[i].think != NULL){
+				WallList[i].think(&WallList[i]);
 			}
 		}
 	}
@@ -139,11 +165,21 @@ Entity *NewBull(){
 }
 void DrawEnts(){
 	int i,j;
-	for(j = 0; j < LAYERS; j++){
+	for(j = 0; j < 2; j++){
 		for(i = 0; i < MAXENTITIES;i++){
 			if(EntList[i].used && EntList[i].z == j){
 				DrawEnt(&EntList[i]);
 			}
+		}
+	}
+	for(i = 0; i < MAXBULLETS;i++){
+		if(BullList[i].used && BullList[i].z == j){
+			DrawEnt(&BullList[i]);
+		}
+	}
+	for(i = 0; i < MAXWALLS;i++){
+		if(WallList[i].used && WallList[i].z == j){
+			DrawEnt(&WallList[i]);
 		}
 	}
 }
@@ -245,7 +281,7 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 }
 Entity *CreateBlock(int x, int y, Sprite *s){
 	Entity *wall;
-	wall = NewEnt();
+	wall = NewWall();
 	if(wall == NULL) return wall;
 	wall->sprite = s;
 	wall->x = x;
@@ -261,7 +297,7 @@ Entity *CreateBlock(int x, int y, Sprite *s){
 }
 Entity *CreateBullet(int x, int y, Sprite *s, int vx, int vy, int timer, int type){
 	Entity *bull;
-	bull = NewEnt();
+	bull = NewBull();
 	if(bull == NULL) return bull;
 	bull->sprite = s;
 	bull->x = x;
@@ -306,6 +342,8 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 	spawn->w = 32;
 	spawn->h = 32;
 	spawn->frame = 0;
+	spawn->spTimer = 120;
+	spawn->curSpT = 0;
 	printf("created spawn \n");
 	return spawn;
 }
@@ -361,12 +399,11 @@ void PlayerThink(Entity *self){
 	}
 }
 void BulletThink(Entity *ent){
-	ent->x += ent->vx;
-	ent->y += ent->vy;
-	if(!placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+	if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
 		DestEnt(ent);
 	}
-	
+	ent->x += ent->vx;
+	ent->y += ent->vy;
 }
 
 //Effect Create functions
@@ -529,21 +566,29 @@ int placeFree(int x, int y){
 int placeFree2(int x, int y, int w, int h){
 	int cx,cy,cx2,cy2;
 	int bx,by,bw,bh;
+	int i;
 
 	cx = x / 32;
 	cy = y / 32;
-	cx2 = (x + 31)/32;
-	cy2 = (y + 31)/32;
+	cx2 = (x + 32)/32;
+	cy2 = (y + 32)/32;
 	
-	bx = cx*32;
-	by = cy*32;
+	bx = x - (x%32);
+	by = y - (y%32);
 	bw = 32;
 	bh = 32;
 
-	if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
+	for(i = 0; i< MAXWALLS; i += 1){
+		if(WallList[i].used){
+			if(WallList[i].x < x + w && WallList[i].x + WallList[i].w > x && WallList[i].y < y + h && WallList[i].y + WallList[i].h > y)
+			return 0;
+		}
+	}
+
+	/*if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
 		if(bx < x + w && bx + bw > x && by < y + h && by + bh > y)
 		return 0;
-	}
+	}*/
 
 	return 1;
 }

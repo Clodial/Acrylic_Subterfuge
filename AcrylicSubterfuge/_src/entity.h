@@ -11,7 +11,7 @@
 #define SP 4
 #define MAXSPEED 16
 #define LAYERS 3
-#define MAXWALLS 12
+#define MAXWALLS 13
 #define MAXBULLETS 128
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
@@ -76,6 +76,9 @@ typedef struct Ent{
 	int				fTimer;
 	int				curFtimer;
 	
+	int				spTimer;
+	int				curSpT;
+
 	int				pWeapon; //I mean, if there is only two kinds of moving entitities besides bullets that can 'own' ammo
 	int				enemy;	//only used if SCTYPE = S_ENEMY
 	int 			frame;
