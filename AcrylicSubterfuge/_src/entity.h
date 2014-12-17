@@ -116,6 +116,7 @@ void ClearAll();
 Entity *NewEnt();
 Entity *NewWall();
 Entity *NewBullet();
+Entity *NewEnem();
 void DestEnt(Entity *ent);
 void DrawEnt(Entity *ent);
 void DrawEnts();

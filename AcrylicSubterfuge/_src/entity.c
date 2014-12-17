@@ -31,6 +31,7 @@ int numEnem;
 int numEnts;
 int numWalls;
 int numBulls;
+int numEnems;
 int numEffs;
 
 int killCount;
@@ -42,6 +43,8 @@ int dirSwitchT;
 int curDirSwT;
 
 int curPower;
+
+int mEnem;
 
 int ww;
 
@@ -57,17 +60,19 @@ int level;
 void InitParts(){
 	int i;
 
-	killCount = 0;
+	killCount = 10;
 	direction = 0;
-	dirSwitchT = 240;
+	dirSwitchT = 30;
 	curDirSwT = 0;
 	numWalls = 0;
 	numBulls = 0;
 	numEnts = 0;
 	numEffs = 0;
-	curPower = P_WHITE;
+	curPower = P_NORM;
 	level = 0;
+	mEnem = 5;
 	ww = 1;
+
 	for(i = 0; i < MAXENTITIES; i++){
 		EntList[i].sprite = NULL;
 		EntList[i].think = NULL;
@@ -88,19 +93,44 @@ void InitParts(){
 		EffList[i].think = NULL;
 		EffList[i].used = 0;
 	}
+	for(i = 0; i < MAXENEMIES; i ++){
+		EnemList[i].sprite = NULL;
+		EnemList[i].think = NULL;
+		EnemList[i].used = 0;
+	}
 }
 void UpdateParts(){
 	//will also contain the spawning code
 	int i;
 	Effect *ef;
 	Sprite *spr;
-	//curDirSwT += 1;
+	curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
 		if(direction > 3){
 			direction = 0;
 		}
 		curDirSwT = 0;
+	}
+
+	if(killCount >= 10 && killCount < 20){
+		level = 1;
+		dirSwitchT = 30;
+	}else if(killCount >= 20 && killCount < 30){
+		level = 2;
+		dirSwitchT = 30;
+	}else if(killCount >= 30 && killCount < 40){
+		level = 3;
+		dirSwitchT = 30;
+	}else if(killCount >= 40 && killCount < 50){
+		level = 4;
+		dirSwitchT = 30;
+	}else if(killCount >= 50){
+		level = 5;
+		dirSwitchT = 30;
+	}else{
+		level = 0;
+		dirSwitchT = 30;
 	}
 	if(curPower == P_WHITE && level < 5 && ww == 1){
 		spr = LoadSprite("_img/spr_w.png",352,352,1);
@@ -132,6 +162,13 @@ void UpdateParts(){
 		if(EffList[i].used){
 			if(EffList[i].think != NULL){
 				EffList[i].think(&EffList[i]);
+			}
+		}
+	}
+	for(i = 0; i < MAXENEMIES; i++){
+		if(EnemList[i].used){
+			if(EnemList[i].think != NULL){
+				EnemList[i].think(&EnemList[i]);
 			}
 		}
 	}
@@ -178,6 +215,19 @@ Entity *NewBull(){
 	BullList[i].used = 1;
 	return &BullList[i];
 }
+Entity *NewEnem(){
+	int i;
+	if(numEnems + 1 >= MAXENEMIES){
+		return NULL;
+	}
+	numEnems++;
+	/*establish memory for new entity*/
+	for(i = 0;i <= numEnems; i++){
+		if(EnemList[i].used == 0)break;
+	}
+	EnemList[i].used = 1;
+	return &EnemList[i];
+}
 void DrawEnts(){
 	int i,j;
 	for(j = 0; j < 2; j++){
@@ -187,13 +237,18 @@ void DrawEnts(){
 			}
 		}
 	}
+	for(i = 0; i < MAXENEMIES;i++){
+		if(EnemList[i].used){
+			DrawEnt(&EnemList[i]);
+		}
+	}
 	for(i = 0; i < MAXBULLETS;i++){
-		if(BullList[i].used && BullList[i].z == j){
+		if(BullList[i].used){
 			DrawEnt(&BullList[i]);
 		}
 	}
 	for(i = 0; i < MAXWALLS;i++){
-		if(WallList[i].used && WallList[i].z == j){
+		if(WallList[i].used){
 			DrawEnt(&WallList[i]);
 		}
 	}
@@ -226,6 +281,14 @@ void DestWalls(Entity *ent){
 	}
 	ent->sprite = NULL;
 }
+void DestEnems(Entity *ent){
+	ent->used = 0;
+	numEnems--;
+	if(ent->sprite != NULL){
+		FreeSprite(ent->sprite);
+	}
+	ent->sprite = NULL;
+}
 void ClearAll(){
 	int i;
 	for(i = 0;i < MAXENTITIES; i++){
@@ -246,6 +309,11 @@ void ClearAll(){
 	for(i = 0;i < MAXEFFECTS; i++){
 		if(EffList[i].used != 0){
 			DestEff(&EffList[i]);
+		}
+	}
+	for(i = 0;i < MAXENEMIES; i++){
+		if(EnemList[i].used != 0){
+			DestEnt(&EnemList[i]);
 		}
 	}
 }
@@ -304,7 +372,7 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->type = S_PLAYER;
 
 	player->hp = 10;
-	player->timer = 20;
+	player->timer = 60;
 	player->curTimer = 0;
 
 	player->frame = 0;
@@ -402,7 +470,7 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 	Entity *enemy;
 	int dir; //this is that crazy randomization stuff this is going to implement
-	enemy = NewEnt();
+	enemy = NewEnem();
 	if(enemy== NULL) return enemy;
 	enemy->x = x;
 	enemy->y = y;
@@ -410,7 +478,7 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 	enemy->w = 32;
 	enemy->h = 32;
 	enemy->z = 1;
-	enemy->hp = hp;
+	enemy->hp = 5;
 	enemy->enemy = type;
 	//RANDOMNESS ENSUES at least for direction
 	if(enemy->enemy == E_STRT || enemy->enemy == E_DIAG || enemy->enemy == E_PHASE || enemy->enemy == E_SNAKE){
@@ -419,6 +487,9 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 		if(dir > 3 || dir < 0){ //because I'm a bit anal about rand for some reason
 			enemy->dir = 0;
 		}
+	}else if(enemy->enemy == E_DISP){
+		enemy->curTimer = 0;
+		enemy->timer == 30;
 	}else if(enemy->enemy == E_BOX){
 		dir = rand()%2;
 		enemy->dir = dir;
@@ -432,10 +503,188 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 	enemy->type = S_ENEMY;
 	return enemy;
 }
-//void EnemyThink(Entity *ent){
-//	//Determining vx and vy for enemy types E_STRT, E_DIAG, E_PHASE, E_BOX, and E_PHASE
-//	if(ent->enemy == 
-//}
+void EnemyThink(Entity *ent){
+	int r;
+	//Determining vx and vy for enemy types E_STRT, E_PHASE, E_SNAKE, and E_DISP
+	if(ent->enemy == E_STRT){
+		if(ent->dir == 0){
+			ent->vy = 0;
+			if(placeFree(ent->x - 4,ent->y)){
+				ent->vx = -4;
+			}else{
+				ent->dir = 1;
+			}
+		}else if(ent->dir == 1){
+			ent->vy = 0;
+			if(placeFree(ent->x + 4,ent->y)){
+				ent->vx = 4;
+			}else{
+				ent->dir = 0;
+			}
+		}else if(ent->dir == 2){
+			ent->vx = 0;
+			if(placeFree(ent->x,ent->y - 4)){
+				ent->vy = -4;
+			}else{
+				ent->dir = 3;
+			}
+		}else{
+			ent->vx = 0;
+			if(placeFree(ent->x,ent->y+4)){
+				ent->vy= 4;
+			}else{
+				ent->dir = 2;
+			}
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->enemy == E_DIAG){
+		if(ent->dir == 0){
+			if(placeFree(ent->x +2,ent->y-2)){
+				ent->vx = 2;
+				ent->vy = -2;
+			}else{
+				ent->dir = 1;
+			}
+		}else if(ent->dir == 1){
+			if(placeFree(ent->x-2,ent->y-2)){
+				ent->vx = 2;
+				ent->vy = -2;
+			}else{
+				ent->dir = 0;
+			}
+		}else if(ent->dir == 2){
+			ent->vx = 0;
+			if(placeFree(ent->x-2,ent->y+2)){
+				ent->vy = -2;
+				ent->vx = 2;
+			}else{
+				ent->dir = 3;
+			}
+		}else{
+			ent->vx = 0;
+			if(placeFree(ent->x+2,ent->y+2)){
+				ent->vy= 2;
+				ent->vx = 2;
+			}else{
+				ent->dir = 2;
+			}
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->enemy == E_PHASE){
+		if(ent->dir == 0){
+			ent->vy = 0;
+			ent->y = 0;
+			if(ent->x < -(ent->w)){
+				ent->x = GAMEW;
+			}
+		}else if(ent->dir == 1){
+			ent->vy = 4;
+			ent->vy = 0;
+			if(ent->x > GAMEW){
+				ent->x = -(ent->w);
+			}
+		}else if(ent->dir == 2){
+			ent->vx = 0;
+			ent->vy = -4;
+			if(ent->y < -(ent->h)){
+				ent->y = GAMEH;
+			}
+		}else{
+			ent->vx = 0;
+			ent->vy = 4;
+			if(ent->y > GAMEH){
+				ent->y = -(ent->h);
+			}
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->enemy == E_SNAKE){
+		if(ent->dir == 0){
+			ent->vy = 0;
+			if(placeFree(ent->x - 4,ent->y)){
+				ent->vx = -4;
+			}else{
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 2;
+				}else if(r == 2){
+					ent->dir = 3;
+				}else{
+					ent->dir = 1;
+				}
+			}
+		}else if(ent->dir == 1){
+			ent->vy = 0;
+			if(placeFree(ent->x + 4,ent->y)){
+				ent->vx = 4;
+			}else{
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 2;
+				}else if(r == 2){
+					ent->dir = 3;
+				}else{
+					ent->dir = 0;
+				}
+			}
+		}else if(ent->dir == 2){
+			ent->vx = 0;
+			if(placeFree(ent->x,ent->y - 4)){
+				ent->vy = -4;
+			}else{
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 0;
+				}else if(r == 2){
+					ent->dir = 3;
+				}else{
+					ent->dir = 1;
+				}
+			}
+		}else{
+			ent->vx = 0;
+			if(placeFree(ent->x,ent->y+4)){
+				ent->vy= 4;
+			}else{
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 0;
+				}else if(r == 2){
+					ent->dir = 2;
+				}else{
+					ent->dir = 1;
+				}
+			}
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
+	}else if(ent->enemy == E_DISP){
+		ent->curTimer += 1;
+		if(ent->curTimer >= ent->timer){
+			r = rand()%4;
+			if(r == 0){
+				if(ent->x-32 >= 0){
+					ent->x -= 32;
+				}
+			}else if(r == 1){
+				if(ent->x+32 <= GAMEW-32){
+					ent->x += 32;
+				}
+			}else if(r == 2){
+				if(ent->y-32 >= 0){
+					ent->y -= 32;
+				}
+			}else{
+				if(ent->y + 32 >= GAMEH-32){
+					ent->y += 32;
+				}
+			}
+			ent->curTimer = 0;
+		}
+	}
+}
 void PlayerThink(Entity *self){
 
 	self->curTimer += 1;
@@ -526,7 +775,12 @@ void BulletThink(Entity *ent){
 		}
 		ent->x += ent->vx;
 		ent->y += ent->vy;
-	}else if(ent->weapon == W_LASER || ent->weapon == W_MINE){
+	}else if(ent->weapon == W_LASER){
+		ent->curTimer += 1;
+		if(ent->curTimer >= ent->timer){
+			DestBull(ent);	
+		}
+	}else if(ent->weapon == W_MINE){
 		ent->curTimer += 1;
 		if(ent->curTimer >= ent->timer){
 			DestBull(ent);	
@@ -630,6 +884,7 @@ Effect *CreateSpecial(int x, int y, Sprite *s, int t, int type){
 	sp->type = type;
 	sp->curT = 0;
 	sp->timer = t;
+	sp->think = SpecThink;
 	return sp;
 
 }
@@ -749,6 +1004,7 @@ void SpecThink(Effect *ef){
 		ef->curT += 1;
 		if(ef->curT >= ef->timer){
 			curPower = P_NORM;
+		}if(curPower != P_WHITE){
 			DestEff(ef);
 		}
 	}
@@ -803,11 +1059,5 @@ int placeFree2(int x, int y, int w, int h){
 			return 0;
 		}
 	}
-
-	/*if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
-		if(bx < x + w && bx + bw > x && by < y + h && by + bh > y)
-		return 0;
-	}*/
-
 	return 1;
 }
