@@ -33,8 +33,8 @@ void Init_Graphics()
 	Uint32 Vflags = SDL_ANYFORMAT;
     Uint32 HWflag = 0;
     SDL_Surface *temp;
-    S_Data.xres = 1024;
-    S_Data.yres = 768;
+    S_Data.xres = 352;
+    S_Data.yres = 352;
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
@@ -140,7 +140,7 @@ void InitSpriteList()
 
 /*Create a sprite from a file, the most common use for it.*/
 
-Sprite *LoadSprite(char *filename,int sizex, int sizey)
+Sprite *LoadSprite(char *filename,int sizex, int sizey, int numF)
 {
   int i;
   SDL_Surface *temp;
@@ -171,14 +171,14 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey)
     fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());
     exit(0);
   }
-  SpriteList[i].image = SDL_DisplayFormat(temp);
+  SpriteList[i].image = SDL_DisplayFormatAlpha(temp);
   SDL_FreeSurface(temp);
   /*sets a transparent color for blitting.*/
   SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
    /*then copy the given information to the sprite*/
   strncpy(SpriteList[i].filename,filename,20);
-      /*now sprites don't have to be 16 frames per line, but most will be.*/
-  SpriteList[i].framesperline = 16;
+      
+  SpriteList[i].framesperline = numF;
   SpriteList[i].w = sizex;
   SpriteList[i].h = sizey;
   SpriteList[i].used++;
@@ -271,14 +271,14 @@ void CloseSprites()
 void DrawSprite(Sprite *sprite,SDL_Surface *surface,int sx,int sy, int frame)
 {
     SDL_Rect src,dest;
-    src.x = frame%sprite->framesperline * sprite->w;
-    src.y = frame/sprite->framesperline * sprite->h;
-    src.w = sprite->w;
-    src.h = sprite->h;
+    src.x = frame % sprite->framesperline * sprite->w;
+	src.y = frame / sprite->framesperline * sprite->h;
+    src.w = 32;
+    src.h = 32;
     dest.x = sx;
     dest.y = sy;
-    dest.w = sprite->w;
-    dest.h = sprite->h;
+	dest.w = sprite->w;
+	dest.h = sprite->h;
     SDL_BlitSurface(sprite->image, &src, surface, &dest);
 }
 
@@ -735,28 +735,3 @@ void SwapSprite(SDL_Surface *sprite,int color1,int color2,int color3)
     }
     SDL_UnlockSurface(sprite);
 }
-
-/*mouse handling functions*/
-/*this only handles the drawing and animation of.  Assuming you have a 16 by 16  tiled sprite sheet.  This will not handle input*/
-void InitMouse()
-{
-  Msprite = LoadSprite("images/mouse.png",16, 16);
-  if(Msprite == NULL)fprintf(stdout,"mouse didn't load\n");
-  Mouse.state = 0;
-  Mouse.shown = 0;
-  Mouse.frame = 0;
-}
-
-    /*draws to the screen immediately before the blit, after all
-     it wouldn't be a very good mouse if it got covered up by the
-     game content*/
-void DrawMouse()
-{
-  int mx,my;
-  SDL_GetMouseState(&mx,&my);
-  if(Msprite != NULL) DrawSprite(Msprite,screen,mx,my,Mouse.frame);
-  Mouse.frame = (Mouse.frame + 1)%16;
- Mouse.x = mx;
- Mouse.y = my;
-}
-

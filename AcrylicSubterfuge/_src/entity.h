@@ -24,19 +24,28 @@ enum POS{
 //	Think of this as moving in specific degrees based on the player location
 //	As in, it won't be perfect, this is more for simpler box collisions
 //E_SNAKE -> Hits a wall, goes in the next verticy
+
+//Though, let's be real, if I'm randomizing what enemies can come out, this is problematic
 enum ENTYPE{
-	E_STRT, E_DIAG, E_FOL, E_PHASE,  E_SNAKE
+	E_STRT, E_DIAG, E_WEP, E_PHASE, E_SNAKE, E_BOX, E_CPY, E_DISP
 };
 
 //Entity types (SC represents Scene)
 enum SCTYPE{
-	S_WALL, S_PLAYER, S_SPAWN, S_BULLET, S_EFFECT, S_POWER
+	S_WALL, S_PLAYER, S_SPAWN, S_BULLET, S_EFFECT, S_POWER, S_ENEMY
 };
 
+//affects state of the game, as well
+enum POWUP{
+	//powerups can only be rockets, shotguns, mines, lasers, lvlds, whitewashes, and lvlus
+	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_LVLD, P_WHITE, P_LVLU
+};
 enum DIR{
 	D_RIGHT, D_LEFT, D_UP, D_DOWN
 };
-
+enum WEAP{
+	W_NORM, W_ROCK, W_MINE, W_LASER
+};
 typedef struct Ent{
 
 	Sprite			*sprite;
@@ -45,23 +54,23 @@ typedef struct Ent{
 	int				w,h;
 	int				vx, vy;	//speed, duh
 	int				pos;	//this is for one of the crazy powerups (haven't figured it out yet)
+	
+	int				dir;	//different from pos -> meant to determine what direction enemies will start out in (meant for 
+
 	int				type;	
 	int 			hp;
 
-	int				power;	//current powerup/weapon
-	int				powLen; //powerup length			
-	int				curA;	//ammo value
-	int				maxA;
+	int				power;	//current powerup
+	int				weapon; //weapon
+	int				powLen; //powerup length
 
 	int 			timer;
 	int				curTimer;
 
 	int				fTimer;
 	int				curFtimer;
-
-	int 			solid;
 	
-	int				pWeapon;
+	int				pWeapon; //I mean, if there is only two kinds of moving entitities besides bullets that can 'own' ammo
 	int				enemy;	//only used if SCTYPE = S_ENEMY
 	int 			frame;
 	int				numFrames;
@@ -98,30 +107,34 @@ void DrawEff(Effect *eff);
 void DestEff(Effect *eff);
 void ClearAllEff();
 
-Entity *CreatePlayer(int x, int y, Sprite *sprite);
+Entity *CreatePlayer(int x, int y, Sprite *sprite, int nF);
 void 	PlayerThink(Entity *self);
 void 	PlayerTouch(Entity *self, Entity *other);
 
 Entity *CreateBlock(int x, int y, Sprite *sprite);
 void BlockThink(Entity *self);
 
-Entity *CreateBullet(int x, int y, Sprite *sprite, int vx, int vy, Entity *owner, int timer);
+Entity *CreateBullet(int x, int y, Sprite *sprite, int vx, int vy, int timer, int type);
 void	BulletThink(Entity *self);
 void 	BulletTouch(Entity *self, Entity *other);
 
-Entity *CreatePowerup(int x, int y, Sprite *sprite, int timer);
+Entity *CreatePowerup(int x, int y, Sprite *sprite, int timer, int type);
 void	PowerThink(Entity *self);
 void 	PowerTouch(Entity *self, Entity *other);
 void 	PowerSpawn();
 
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
-void 	SpawnThink(Entity *self);
 
+Entity *CreateEnemy(int x, int y, Sprite *sprite, int type, int nF);
+void	EnemyThink(Entity *self);
+void	EnemyTouch(Entity *self, Entity *other);
 //Effect Code
-Effect *CreateBGEff(int x, int y, int w, int h, Sprite *sprite, int pos);
+Effect *CreateBGEff(int x, int y, Sprite *sprite);
 void 	BGThink(Effect *self);
 
-Effect *CreateLine(int x, int y, int w, int h, Sprite *sprite, int pos);
+Effect *CreateLine(int x, int y, int w, int h, Sprite *sprite);
 void	LineEfThink(Effect *self);
 
+//extra functions
+void placeFree(int x, int y, Entity *ent);//GAMEMAKER
 #endif
