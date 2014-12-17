@@ -145,6 +145,7 @@ void 	PowerTouch(Entity *self, Entity *other);
 void 	PowerSpawn();
 
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
+void	SpawnThink(Entity *self);
 
 Entity *CreateEnemy(int x, int y, Sprite *sprite, int type, int nF, int hp);
 void	EnemyThink(Entity *self);

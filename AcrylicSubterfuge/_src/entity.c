@@ -113,25 +113,19 @@ void UpdateParts(){
 		curDirSwT = 0;
 	}
 
-	if(killCount >= 10 && killCount < 20){
-		level = 1;
+	if(level = 0){
+		dirSwitchT = 480;
+	}else if(level = 1){
+		dirSwitchT = 360;
+	}else if(level = 2){
+		dirSwitchT = 240;
+	}else if(level = 3){
+		dirSwitchT = 120;
+	}else if(level = 4){
+		dirSwitchT = 90;
+	}else if(level = 5){
 		dirSwitchT = 30;
-	}else if(killCount >= 20 && killCount < 30){
-		level = 2;
-		dirSwitchT = 30;
-	}else if(killCount >= 30 && killCount < 40){
-		level = 3;
-		dirSwitchT = 30;
-	}else if(killCount >= 40 && killCount < 50){
-		level = 4;
-		dirSwitchT = 30;
-	}else if(killCount >= 50){
-		level = 5;
-		dirSwitchT = 30;
-	}else{
-		level = 0;
-		dirSwitchT = 30;
-	}
+	} 
 	if(curPower == P_WHITE && level < 5 && ww == 1){
 		spr = LoadSprite("_img/spr_w.png",352,352,1);
 		ef = CreateSpecial(0,0,spr,120,P_WHITE);
@@ -419,16 +413,15 @@ Entity *CreateBullet(int x, int y, Sprite *s, int vx, int vy, int timer, int typ
 	bull->timer = timer;
 	bull->weapon = type;
 	bull->type = S_BULLET;
-	if(bull->weapon == P_LASER){
-		spr = LoadSprite("_img/spr_bPL.png",16,16,1);
-		if(vx > 0){
-			nB = CreateBullet(bull->x+16,bull->y,spr,4,0,30,P_LASER);
-		}else if(vx < 0){
-			nB = CreateBullet(bull->x-16,bull->y,spr,-4,0,30,P_LASER);
-		}else if(vy > 0){
-			nB = CreateBullet(bull->x,bull->y+16,spr,0,4,30,P_LASER);
-		}else if(vy < 0){
-			nB = CreateBullet(bull->x,bull->y-16,spr,0,-4,30,P_LASER);
+	if(bull->weapon == W_LASER){
+		if(bull->vx > 0){
+			nB = CreateBullet(bull->x+16,bull->y,bull->sprite,4,0,30,P_LASER);
+		}else if(bull->vx < 0){
+			nB = CreateBullet(bull->x-16,bull->y,bull->sprite,-4,0,30,P_LASER);
+		}else if(bull->vy > 0){
+			nB = CreateBullet(bull->x,bull->y+16,bull->sprite,0,4,30,P_LASER);
+		}else if(bull->vy < 0){
+			nB = CreateBullet(bull->x,bull->y-16,bull->sprite,0,-4,30,P_LASER);
 		}
 	}
 	bull->think = BulletThink;
@@ -465,6 +458,7 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 	spawn->timer = 120;
 	spawn->curTimer = 0;
 	spawn->curTimer = 0;
+	//spawn->think = SpawnThink;
 	return spawn;
 }
 Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
@@ -497,7 +491,7 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 			enemy->dir = 0;
 		}
 	}
-	//enemy->think = EnemyThink;
+	enemy->think = EnemyThink;
 	enemy->frame = 0;
 	enemy->numFrames = nF;
 	enemy->type = S_ENEMY;
@@ -509,28 +503,28 @@ void EnemyThink(Entity *ent){
 	if(ent->enemy == E_STRT){
 		if(ent->dir == 0){
 			ent->vy = 0;
-			if(placeFree(ent->x - 4,ent->y)){
+			if(placeFree(ent->x - 4,ent->y) && ent->x - 4 > 0){
 				ent->vx = -4;
 			}else{
 				ent->dir = 1;
 			}
 		}else if(ent->dir == 1){
 			ent->vy = 0;
-			if(placeFree(ent->x + 4,ent->y)){
+			if(placeFree(ent->x + 4,ent->y) && ent->x + 32 + 4 < GAMEW){
 				ent->vx = 4;
 			}else{
 				ent->dir = 0;
 			}
 		}else if(ent->dir == 2){
 			ent->vx = 0;
-			if(placeFree(ent->x,ent->y - 4)){
+			if(placeFree(ent->x,ent->y - 4) && ent->y - 4 > 0){
 				ent->vy = -4;
 			}else{
 				ent->dir = 3;
 			}
 		}else{
 			ent->vx = 0;
-			if(placeFree(ent->x,ent->y+4)){
+			if(placeFree(ent->x,ent->y+4) && ent->y+32 + 4 < GAMEH){
 				ent->vy= 4;
 			}else{
 				ent->dir = 2;
@@ -540,14 +534,14 @@ void EnemyThink(Entity *ent){
 		ent->y += ent->vy;
 	}else if(ent->enemy == E_DIAG){
 		if(ent->dir == 0){
-			if(placeFree(ent->x +2,ent->y-2)){
+			if(placeFree(ent->x +2,ent->y-2) && ent->x + 2 < GAMEW && ent->y -2 > 0){
 				ent->vx = 2;
 				ent->vy = -2;
 			}else{
 				ent->dir = 1;
 			}
 		}else if(ent->dir == 1){
-			if(placeFree(ent->x-2,ent->y-2)){
+			if(placeFree(ent->x-2,ent->y-2) && ent->x - 2 > 0 && ent->y - 2 > 0){
 				ent->vx = 2;
 				ent->vy = -2;
 			}else{
@@ -555,7 +549,7 @@ void EnemyThink(Entity *ent){
 			}
 		}else if(ent->dir == 2){
 			ent->vx = 0;
-			if(placeFree(ent->x-2,ent->y+2)){
+			if(placeFree(ent->x-2,ent->y+2) && ent->x > 0 && ent->y < GAMEH){
 				ent->vy = -2;
 				ent->vx = 2;
 			}else{
@@ -563,7 +557,7 @@ void EnemyThink(Entity *ent){
 			}
 		}else{
 			ent->vx = 0;
-			if(placeFree(ent->x+2,ent->y+2)){
+			if(placeFree(ent->x+2,ent->y+2) && ent->x < GAMEW && ent->y < GAMEH){
 				ent->vy= 2;
 				ent->vx = 2;
 			}else{
@@ -605,6 +599,9 @@ void EnemyThink(Entity *ent){
 			ent->vy = 0;
 			if(placeFree(ent->x - 4,ent->y)){
 				ent->vx = -4;
+				if(ent->x + ent->vx < -32){
+					ent->x = 0;
+				}
 			}else{
 				r = rand()%3;
 				if(r == 1){
@@ -619,6 +616,9 @@ void EnemyThink(Entity *ent){
 			ent->vy = 0;
 			if(placeFree(ent->x + 4,ent->y)){
 				ent->vx = 4;
+				if(ent->x+ ent->vx > GAMEW){
+					ent->x = 0;
+				}
 			}else{
 				r = rand()%3;
 				if(r == 1){
@@ -633,6 +633,9 @@ void EnemyThink(Entity *ent){
 			ent->vx = 0;
 			if(placeFree(ent->x,ent->y - 4)){
 				ent->vy = -4;
+				if(ent->y + ent->vy < ent->h){
+					ent->y = GAMEH;
+				}
 			}else{
 				r = rand()%3;
 				if(r == 1){
@@ -647,6 +650,9 @@ void EnemyThink(Entity *ent){
 			ent->vx = 0;
 			if(placeFree(ent->x,ent->y+4)){
 				ent->vy= 4;
+				if(ent->y + ent->vy > GAMEH){
+					ent->y = 0;
+				}
 			}else{
 				r = rand()%3;
 				if(r == 1){
@@ -662,7 +668,7 @@ void EnemyThink(Entity *ent){
 		ent->y += ent->vy;
 	}else if(ent->enemy == E_DISP){
 		ent->curTimer += 1;
-		if(ent->curTimer >= ent->timer){
+		if(ent->curTimer >= ent->timer+60){
 			r = rand()%4;
 			if(r == 0){
 				if(ent->x-32 >= 0){
@@ -778,6 +784,7 @@ void BulletThink(Entity *ent){
 	}else if(ent->weapon == W_LASER){
 		ent->curTimer += 1;
 		if(ent->curTimer >= ent->timer){
+			printf("Making Lasers \n");
 			DestBull(ent);	
 		}
 	}else if(ent->weapon == W_MINE){
@@ -832,8 +839,30 @@ void PowerThink(Entity *e){
 			e->curTimer = 0;
 		}
 	}
+}
+void SpawnThink(Entity *s){
+	int r,t;
+	Sprite *ss;
+	Entity *en;
 
-
+	s->curTimer += 1;
+	if(s->curTimer > s->timer && numEnems < mEnem){
+		r = rand()%100;
+		ss = LoadSprite("spr_enemy.png",32,32,1);
+		if(r >= 0 && r < 20){
+			t = E_STRT;
+		}else if(r >= 20 && r < 40){
+			t = E_PHASE;
+		}else if(r >= 40 && r < 60){
+			t = E_SNAKE;
+		}else if(r >= 60 && r < 80){
+			t = E_DIAG;
+		}else{
+			t = E_DISP;
+		}
+		en = CreateEnemy(s->x,s->y,ss,t,9,5);
+		s->curTimer = 0;
+	}
 }
 //Effect Create functions
 Effect *CreateBGEff(int x, int y, Sprite *s){

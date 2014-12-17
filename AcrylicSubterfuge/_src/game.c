@@ -57,15 +57,15 @@ int main(int argc, char *argv[]){
 			curPower = P_KEEP;
 		}else if(keys[SDLK_8]){
 			if(level == 0){
-				killCount = 15;	
+				level = 1;
 			}if(level == 1){
-				killCount = 25;	
+				level = 2;	
 			}if(level == 2){
-				killCount = 35;	
+				level = 3;	
 			}if(level == 3){
-				killCount = 45;	
+				level = 4;	
 			}if(level == 4){
-				killCount = 55;	
+				level = 5;	
 			}else{
 				killCount = 0;	
 			}
@@ -146,6 +146,23 @@ int main(int argc, char *argv[]){
 				if(placeFree(playa->x,playa->y + 2) && playa->y+2 < GAMEH)
 					playa->y += 2;
 			}
+		}
+
+		if(keys[SDLK_e]){
+			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
+			e1 = CreateEnemy(160,160,spr,E_STRT,9,5);
+		}else if(keys[SDLK_r]){
+			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
+			e1 = CreateEnemy(160,160,spr,E_PHASE,9,5);
+		}else if(keys[SDLK_t]){
+			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
+			e1 = CreateEnemy(160,160,spr,E_DIAG,9,5);
+		}else if(keys[SDLK_y]){
+			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
+			e1 = CreateEnemy(160,160,spr,E_SNAKE,9,5);
+		}else if(keys[SDLK_u]){
+			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
+			e1 = CreateEnemy(160,160,spr,E_DISP,9,5);
 		}
 
 		if(keys[SDLK_LEFT]){
