@@ -17,25 +17,37 @@
 //externed variables
 extern SDL_Surface *screen;
 extern int numSpawns; //necessary for where enemies will be spawning
+extern Effect *bg1,*bg2;
+extern int *lvl[11][11];
 
 Entity EntList[MAXENTITIES];
 Effect EffList[MAXEFFECTS];
 int numEnts;
 int numEffs;
+
+int killCount;
+
 int powSpTimer;
 int curPowStimer;
+
+int dirSwitchT;
+int curDirSwT;
+
 Entity *playa;
 Effect *back1;
 Effect *back2;
 
 //to be possibly externed
-int direction;
+int direction; //direction as follows 0 = left, 1 = up, 2 = right, 3 = down (like gamemaker)
 int level;
 
 void InitParts(){
 	int i;
 
+	killCount = 0;
 	direction = 0;
+	dirSwitchT = 240;
+	curDirSwT = 0;
 	numEnts = 0;
 	level = 0;
 
@@ -54,6 +66,16 @@ void InitParts(){
 void UpdateParts(){
 	//will also contain the spawning code
 	int i;
+
+	curDirSwT += 1;
+	if(curDirSwT >= dirSwitchT){
+		direction += 1;
+		if(direction > 3){
+			direction = 0;
+		}
+		curDirSwT = 0;
+	}
+
 	for(i = 0; i < MAXENTITIES; i++){
 		if(EntList[i].used){
 			if(EntList[i].think != NULL){
@@ -177,6 +199,7 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->type = S_PLAYER;
 
 	player->hp = 10;
+
 	player->frame = 0;
 	player->fTimer = 10;
 	player->curFtimer = 0;
@@ -291,6 +314,7 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 //}
 void PlayerThink(Entity *self){
 
+	self->timer += 1;
 	self->curFtimer+= 1;
 	if(self->curFtimer >= self->fTimer){
 		//So it hits every frame in the sequence
@@ -300,10 +324,6 @@ void PlayerThink(Entity *self){
 			self->frame = 0;
 		}
 		self->curFtimer = 0;
-	}
-	if(direction == 0){
-		//left
-
 	}
 }
 
@@ -318,11 +338,12 @@ Effect *CreateBGEff(int x, int y, Sprite *s){
 	bg->w = 2112;
 	bg->h = 352;
 	bg->z = 0;
+	bg->curDir = 0;
 	bg->sprite = s;
 	bg->think = BGThink;
 	return bg;
 }
-Effect *CreateLine(int x, int y,Sprite *s, int vx){
+Effect *CreateLine(int x, int y,Sprite *s, int v){
 	Effect *line;
 	line = NewEff();
 	if(line == NULL) return line;
@@ -331,7 +352,10 @@ Effect *CreateLine(int x, int y,Sprite *s, int vx){
 	line->w = 64;
 	line->h = 16;
 	line->z = 1;
-	line->vx = vx;
+	line->curDir = 0;
+	line->v = v;
+	line->ix = x;
+	line->iy = y;
 	line->sprite = s;
 	line->think = LineEfThink;
 	return line;
@@ -341,18 +365,127 @@ void BGThink(Effect *eff){
 
 	Sprite *spr;
 
+	//left -> up -> right -> down (like gamemaker)
+	if(direction == eff->curDir){
+		if(direction == 0){
+			if(eff->x >= eff->w){
+				eff->x = -(eff->w);
+			}
+			eff->x += 8;
+		}else if(direction == 1){
+			if(eff->y >= eff->h){
+				eff->y = -(eff->h);
+			}
+			eff->y += 8;
+		}else if(direction == 2){
+			if(eff->x <= -(eff->w)){
+				eff->x = (eff->w);
+			}
+			eff->x -= 8;
+		}else{
+			if(eff->y <= -(eff->h)){
+				eff->y = (eff->h);
+			}
+			eff->y -= 8;
+		}
+	}else{
+		FreeSprite(eff->sprite);
+		if(direction == 0 || direction == 2){
+			eff->w = 2112;
+			eff->h = 352;
+			bg1->x = 0;
+			bg2->x = -2112;
+			bg1->y = 0;
+			bg2->y = 0;
+			if(level == 0){
+				eff->sprite = LoadSprite("_img/lvl1_horz.png",2112,352,1);
+			}else if(level == 1){
+				eff->sprite = LoadSprite("_img/lvl2_horz.png",2112,352,1);
+			}else if(level == 2){
+				eff->sprite = LoadSprite("_img/lvl3_horz.png",2112,352,1);
+			}else if(level == 3){
+				eff->sprite = LoadSprite("_img/lvl4_horz.png",2112,352,1);
+			}else {
+				eff->sprite = LoadSprite("_img/lvl5_horz.png",2112,352,1);
+			}
+		}else if(direction == 1 || direction == 3){
+			eff->w = 352;
+			eff->h = 2112;
+			bg1->x = 0;
+			bg2->x = 0;
+			bg1->y = 0;
+			bg2->y = -2112;
+			if(level == 0){
+				eff->sprite = LoadSprite("_img/lvl1_vert.png",352,2112,1);
+			}else if(level == 1){
+				eff->sprite = LoadSprite("_img/lvl2_vert.png",352,2112,1);
+			}else if(level == 2){
+				eff->sprite = LoadSprite("_img/lvl3_vert.png",352,2112,1);
+			}else if(level == 3){
+				eff->sprite = LoadSprite("_img/lvl4_vert.png",352,2112,1);
+			}else {
+				eff->sprite = LoadSprite("_img/lvl5_vert.png",352,2112,1);
+			}
+		}
 
-	if(eff->x >= eff->w){
-		eff->x = -(eff->w);
+		eff->curDir = direction;
 	}
-	eff->x += 8;
 }
 void LineEfThink(Effect *eff){
 
 	Sprite *spr; //meant for direction changes (cuz, supah power up, yo)
 
-	if(eff->x <= -(eff->w)){
-		eff->x = GAMEW;
+	if(direction == eff->curDir){
+		if(direction == 0){
+			if(eff->x <= -(eff->w)){
+				eff->x = GAMEW;
+			}
+			eff->x -= eff->v;
+		}else if(direction == 1){
+			if(eff->y <= -(eff->h)){
+				eff->y = GAMEH;
+			}
+			eff->y -= eff->v;
+		}else if(direction == 2){
+			if(eff->x >= GAMEW){
+				eff->x = -(eff->w);
+			}
+			eff->x += eff->v;
+		}else{
+			if(eff->y >= GAMEH){
+				eff->y = -(eff->h);
+			}
+			eff->y += eff->v;
+		}
+	}else{
+		FreeSprite(eff->sprite);
+		if(direction == 0 || direction == 2){
+			eff->w = 64;
+			eff->h = 16;
+			eff->x = eff->ix;
+			eff->y = eff->iy;
+			eff->sprite = LoadSprite("_img/spr_horz.png",64,16,1);
+		}else{
+			eff->w = 16;
+			eff->h = 64;
+			eff->x = eff->ix;
+			eff->y = eff->iy;
+			eff->sprite = LoadSprite("_img/spr_vert.png",16,64,1);
+		}
+		eff->curDir = direction;
 	}
-	eff->x -= eff->vx;
+}
+int placeFree(int x, int y){
+	int cx,cy; 
+	int cx2,cy2; //to check the full length
+
+	cx = x / 32; //get the tile that is there
+	cy = y / 32;
+	cx2 = (x + 31)/32;
+	cy2 = (y + 31)/32;
+
+	if(lvl[cy][cx] == 1 || lvl[cy][cx2] == 1 || lvl[cy2][cx] == 1 || lvl[cy2][cx2] == 1){
+	return 0;
+	}
+	return 1;
 }

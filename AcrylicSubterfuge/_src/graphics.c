@@ -271,7 +271,7 @@ void DrawSprite(Sprite *sprite,SDL_Surface *surface,int w, int h, int sx,int sy,
     src.x = frame % sprite->framesperline * sprite->w;
 	src.y = frame / sprite->framesperline * sprite->h;
     src.w = w;
-    src.h = w;
+    src.h = h;
     dest.x = sx;
     dest.y = sy;
 	dest.w = sprite->w;

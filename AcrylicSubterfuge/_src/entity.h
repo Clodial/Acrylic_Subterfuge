@@ -38,7 +38,7 @@ enum SCTYPE{
 //affects state of the game, as well
 enum POWUP{
 	//powerups can only be rockets, shotguns, mines, lasers, lvlds, whitewashes, and lvlus
-	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_LVLD, P_WHITE, P_LVLU
+	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_LVLU, P_LVLD, P_WHITE
 };
 enum DIR{
 	D_RIGHT, D_LEFT, D_UP, D_DOWN
@@ -58,7 +58,7 @@ typedef struct Ent{
 	int				dir;	//different from pos -> meant to determine what direction enemies will start out in (meant for 
 
 	int				lx,ly,rx,ry,ux,uy,dx,dy; //oh boy oh boy, this is for that one powerup
-
+					//This might be for a version of this game that's a little easier than what is currently available here... cuz...
 	int				type;	
 	int 			hp;
 
@@ -66,7 +66,7 @@ typedef struct Ent{
 	int				weapon; //weapon
 	int				powLen; //powerup length
 
-	int 			timer;
+	int 			timer; //weapon power
 	int				curTimer;
 
 	int				fTimer;
@@ -86,11 +86,12 @@ typedef struct Ent{
 typedef struct Eff{
 	Sprite 			*sprite;
 	int 			x,y,z;
-	int				cX, cY;
+	int				ix, iy; //the original positions of the lines for directional changes
 	int 			w,h;
-	int 			vx,vy;
+	int 			v;
 	int 			used;
 	int 			pos;
+	int				curDir; //meant to change around directions and stuff
 	void 			(*think)(struct Eff *self);
 }Effect;
 
@@ -137,6 +138,8 @@ void 	BGThink(Effect *self);
 Effect *CreateLine(int x, int y, Sprite *sprite, int vx);
 void	LineEfThink(Effect *self);
 
+Effect *CreateSpecial(int x, int y, Sprite *sprite); //for level 6 and whitewashes
+void	SpecThink(Effect *self);
 //extra functions
-void placeFree(int x, int y, Entity *ent);//GAMEMAKER
+int placeFree(int x, int y);//GAMEMAKER, no seriously... GAMEMAKER
 #endif

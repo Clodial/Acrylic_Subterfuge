@@ -12,6 +12,7 @@ extern SDL_Surface *buffer;
 extern SDL_Rect Camera;
 
 extern Entity *playa;
+extern int direction;
 
 void Init_All();
 
@@ -20,6 +21,7 @@ SDL_Event Event;
 int main(int argc, char *argv[]){
 	SDL_Surface *temp;
 	SDL_Surface *bg;
+	Sprite *spr; //for creating player weapons
 	int done;
 	int keyn;
 	Uint8 *keys;
@@ -34,14 +36,100 @@ int main(int argc, char *argv[]){
 		SDL_PumpEvents();
 		keys = SDL_GetKeyState(&keyn);
 		
+		if(keys[SDLK_a]){
+			if(direction == 0){
+				if(placeFree(playa->x - 2,playa->y))
+				playa->x -= 2;
+			}else if(direction == 1){
+				if(placeFree(playa->x,playa->y-2))
+				playa->y -= 2;
+			}else if(direction == 2){
+				if(placeFree(playa->x + 2,playa->y))
+				playa->x += 2;
+			}else{
+				if(placeFree(playa->x,playa->y+2))
+				playa->y += 2;
+			}
+		}else if(keys[SDLK_d]){
+			if(direction == 0){
+				if(placeFree(playa->x + 2,playa->y))
+				playa->x += 2;
+			}else if(direction == 1){
+				if(placeFree(playa->x,playa->y+2))
+				playa->y += 2;
+			}else if(direction == 2){
+				if(placeFree(playa->x - 2,playa->y))
+				playa->x -= 2;
+			}else{
+				if(placeFree(playa->x,playa->y-2))
+				playa->y -= 2;
+			}
+		}else if(keys[SDLK_w]){
+			if(direction == 0){
+				if(placeFree(playa->x,playa->y - 2))
+				playa->y -= 2;
+			}else if(direction == 1){
+				if(placeFree(playa->x + 2,playa->y))
+				playa->x += 2;
+			}else if(direction == 2){
+				if(placeFree(playa->x,playa->y + 2))
+				playa->y += 2;
+			}else{
+				if(placeFree(playa->x - 2,playa->y))
+				playa->x -= 2;
+			}
+		}else if(keys[SDLK_s]){
+			if(direction == 0){
+				if(placeFree(playa->x,playa->y + 2))
+				playa->y += 2;
+			}else if(direction == 1){
+				if(placeFree(playa->x - 2,playa->y))
+				playa->x -= 2;
+			}else if(direction == 2){
+				if(placeFree(playa->x,playa->y - 2))
+				playa->y -= 2;
+			}else{
+				if(placeFree(playa->x + 2,playa->y))
+				playa->x += 2;
+			}
+		}
+
 		if(keys[SDLK_LEFT]){
-			playa->x -= 2;
-		}else if(keys[SDLK_RIGHT]){
-			playa->x += 2;	
+			if(playa->curTimer >= playa->timer){
+				if(direction == 0){
+				}else if(direction == 1){
+				}else if(direction == 2){
+				}else{
+				}
+				playa->curTimer = 0;
+			}
 		}else if(keys[SDLK_UP]){
-			playa->y -= 2;
+			if(playa->curTimer >= playa->timer){
+				if(direction == 0){
+				}else if(direction == 1){
+				}else if(direction == 2){
+				}else{
+				}
+				playa->curTimer = 0;
+			}
+		}else if(keys[SDLK_RIGHT]){
+			if(playa->curTimer >= playa->timer){
+				if(direction == 0){
+				}else if(direction == 1){
+				}else if(direction == 2){
+				}else{
+				}
+				playa->curTimer = 0;
+			}
 		}else if(keys[SDLK_DOWN]){
-			playa->y += 2;
+			if(playa->curTimer >= playa->timer){
+				if(direction == 0){
+				}else if(direction == 1){
+				}else if(direction == 2){
+				}else{
+				}
+				playa->curTimer = 0;
+			}
 		}
 
 		ResetBuffer();

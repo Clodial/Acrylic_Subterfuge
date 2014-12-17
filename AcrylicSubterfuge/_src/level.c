@@ -20,6 +20,7 @@ int lvlMode;
 int *lvl[11][11];
 int *eBack[11][11];
 int numSpawns;
+Effect *bg1,*bg2;
 
 int *c1[11][11] ={
 	//The Box
@@ -136,7 +137,6 @@ void InitLvl(){
 	Sprite *sprite;
 	Entity *ent;
 	Effect *eff;
-	Effect *bg1,*bg2;
 
 	numSpawns = 0;
 	ilvl = (rand()%4);
