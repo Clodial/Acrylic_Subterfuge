@@ -28,6 +28,9 @@ Effect EffList[MAXEFFECTS];
 
 int numEnem;
 
+int chLvl;
+int chLvlT;
+
 int numEnts;
 int numWalls;
 int numBulls;
@@ -72,6 +75,9 @@ void InitParts(){
 	level = 0;
 	mEnem = 5;
 	ww = 1;
+	chLvlT = 0;
+	chLvl = 120;
+
 
 	for(i = 0; i < MAXENTITIES; i++){
 		EntList[i].sprite = NULL;
@@ -104,6 +110,8 @@ void UpdateParts(){
 	int i;
 	Effect *ef;
 	Sprite *spr;
+
+	if(
 	curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
@@ -114,17 +122,17 @@ void UpdateParts(){
 	}
 
 	if(level = 0){
-		dirSwitchT = 480;
-	}else if(level = 1){
-		dirSwitchT = 360;
-	}else if(level = 2){
-		dirSwitchT = 240;
-	}else if(level = 3){
-		dirSwitchT = 120;
-	}else if(level = 4){
 		dirSwitchT = 90;
+	}else if(level = 1){
+		dirSwitchT = 80;
+	}else if(level = 2){
+		dirSwitchT = 70;
+	}else if(level = 3){
+		dirSwitchT = 60;
+	}else if(level = 4){
+		dirSwitchT = 50;
 	}else if(level = 5){
-		dirSwitchT = 30;
+		dirSwitchT = 40;
 	} 
 	if(curPower == P_WHITE && level < 5 && ww == 1){
 		spr = LoadSprite("_img/spr_w.png",352,352,1);
