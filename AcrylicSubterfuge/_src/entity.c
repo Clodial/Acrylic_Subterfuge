@@ -111,7 +111,6 @@ void UpdateParts(){
 	Effect *ef;
 	Sprite *spr;
 
-	if(
 	curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
@@ -604,76 +603,51 @@ void EnemyThink(Entity *ent){
 		ent->y += ent->vy;
 	}else if(ent->enemy == E_SNAKE){
 		if(ent->dir == 0){
-			ent->vy = 0;
-			if(placeFree(ent->x - 4,ent->y)){
-				ent->vx = -4;
-				if(ent->x + ent->vx < -32){
-					ent->x = 0;
-				}
+			if(placeFree(ent->x - 4,ent->y) && ent->x > 0){
+				ent->x -= 4;
+				
 			}else{
-				r = rand()%3;
+				r = rand()%2;
 				if(r == 1){
 					ent->dir = 2;
-				}else if(r == 2){
-					ent->dir = 3;
 				}else{
-					ent->dir = 1;
+					ent->dir = 3;
 				}
 			}
 		}else if(ent->dir == 1){
-			ent->vy = 0;
-			if(placeFree(ent->x + 4,ent->y)){
-				ent->vx = 4;
-				if(ent->x+ ent->vx > GAMEW){
-					ent->x = 0;
-				}
+			if(placeFree(ent->x + 4,ent->y) && ent->x < GAMEW-32){
+				ent->x += 4;
 			}else{
-				r = rand()%3;
+				r = rand()%2;
 				if(r == 1){
 					ent->dir = 2;
-				}else if(r == 2){
-					ent->dir = 3;
 				}else{
-					ent->dir = 0;
+					ent->dir = 3;
 				}
 			}
 		}else if(ent->dir == 2){
-			ent->vx = 0;
-			if(placeFree(ent->x,ent->y - 4)){
-				ent->vy = -4;
-				if(ent->y + ent->vy < ent->h){
-					ent->y = GAMEH;
-				}
+			if(placeFree(ent->x,ent->y - 4) && ent->y > 0){
+				ent->y -= 4;
 			}else{
-				r = rand()%3;
+				r = rand()%2;
 				if(r == 1){
 					ent->dir = 0;
-				}else if(r == 2){
-					ent->dir = 3;
 				}else{
 					ent->dir = 1;
 				}
 			}
 		}else{
-			ent->vx = 0;
-			if(placeFree(ent->x,ent->y+4)){
-				ent->vy= 4;
-				if(ent->y + ent->vy > GAMEH){
-					ent->y = 0;
-				}
+			if(placeFree(ent->x,ent->y+4) && ent->y < GAMEH-32){
+				ent->y += 4;
 			}else{
 				r = rand()%3;
 				if(r == 1){
 					ent->dir = 0;
-				}else if(r == 2){
-					ent->dir = 2;
 				}else{
 					ent->dir = 1;
 				}
 			}
 		}
-		ent->x += ent->vx;
-		ent->y += ent->vy;
 	}else if(ent->enemy == E_DISP){
 		ent->curTimer += 1;
 		if(ent->curTimer >= ent->timer+60){
