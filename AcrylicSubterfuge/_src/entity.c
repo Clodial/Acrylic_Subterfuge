@@ -111,6 +111,7 @@ void UpdateParts(){
 	Effect *ef;
 	Sprite *spr;
 
+	printf("numEnems: %i, Max Enemies: %i\n",numEnems, mEnem);
 	curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
@@ -373,7 +374,7 @@ Entity *CreatePlayer(int x, int y, Sprite *s, int nF){
 	player->type = S_PLAYER;
 
 	player->hp = 10;
-	player->timer = 60;
+	player->timer = 30;
 	player->curTimer = 0;
 
 	player->frame = 0;
@@ -465,7 +466,8 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 	spawn->timer = 120;
 	spawn->curTimer = 0;
 	spawn->curTimer = 0;
-	//spawn->think = SpawnThink;
+	spawn->think = SpawnThink;
+
 	return spawn;
 }
 Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
@@ -482,7 +484,7 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 	enemy->hp = 5;
 	enemy->enemy = type;
 	//RANDOMNESS ENSUES at least for direction
-	if(enemy->enemy == E_STRT || enemy->enemy == E_DIAG || enemy->enemy == E_PHASE || enemy->enemy == E_SNAKE){
+	if(enemy->enemy == E_STRT || enemy->enemy == E_DIAGC || enemy->enemy == E_PHASE || enemy->enemy == E_SNAKE){
 		dir = rand()%4;
 		enemy->dir = dir;
 		if(dir > 3 || dir < 0){ //because I'm a bit anal about rand for some reason
@@ -510,73 +512,97 @@ void EnemyThink(Entity *ent){
 	if(ent->enemy == E_STRT){
 		if(ent->dir == 0){
 			ent->vy = 0;
-			if(placeFree(ent->x - 4,ent->y) && ent->x - 4 > 0){
-				ent->vx = -4;
+			if(placeFree(ent->x - 4,ent->y) && ent->x > 0){
+				ent->x -= 4;
 			}else{
 				ent->dir = 1;
 			}
 		}else if(ent->dir == 1){
 			ent->vy = 0;
-			if(placeFree(ent->x + 4,ent->y) && ent->x + 32 + 4 < GAMEW){
-				ent->vx = 4;
+			if(placeFree(ent->x + 4,ent->y) && ent->x < GAMEW - 32){
+				ent->x += 4;
 			}else{
 				ent->dir = 0;
 			}
 		}else if(ent->dir == 2){
 			ent->vx = 0;
-			if(placeFree(ent->x,ent->y - 4) && ent->y - 4 > 0){
-				ent->vy = -4;
+			if(placeFree(ent->x,ent->y - 4) && ent->y > 0){
+				ent->y -= 4;
 			}else{
 				ent->dir = 3;
 			}
 		}else{
 			ent->vx = 0;
-			if(placeFree(ent->x,ent->y+4) && ent->y+32 + 4 < GAMEH){
-				ent->vy= 4;
+			if(placeFree(ent->x,ent->y+4) && ent->y < GAMEH - 32){
+				ent->y += 4;
 			}else{
 				ent->dir = 2;
 			}
 		}
-		ent->x += ent->vx;
-		ent->y += ent->vy;
-	}else if(ent->enemy == E_DIAG){
+	}else if(ent->enemy == E_DIAGC){
 		if(ent->dir == 0){
-			if(placeFree(ent->x +2,ent->y-2) && ent->x + 2 < GAMEW && ent->y -2 > 0){
-				ent->vx = 2;
-				ent->vy = -2;
+			if(placeFree(ent->x - 4 ,ent->y - 4) && ent->x < GAMEW - 32 && ent->y > 0){
+				ent->x -= 2;
+				ent->y -= 2;
 			}else{
-				ent->dir = 1;
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 1;
+				}else if(r == 2){
+					ent->dir = 2;
+				}else{
+					ent->dir = 3;
+				}
 			}
 		}else if(ent->dir == 1){
-			if(placeFree(ent->x-2,ent->y-2) && ent->x - 2 > 0 && ent->y - 2 > 0){
-				ent->vx = 2;
-				ent->vy = -2;
+			if(placeFree(ent->x+4,ent->y-4) && ent->x < GAMEW - 32 && ent->y > 0){
+				ent->x += 2;
+				ent->y -= 2;
 			}else{
-				ent->dir = 0;
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 0;
+				}else if(r == 2){
+					ent->dir = 2;
+				}else{
+					ent->dir = 3;
+				}
 			}
 		}else if(ent->dir == 2){
 			ent->vx = 0;
-			if(placeFree(ent->x-2,ent->y+2) && ent->x > 0 && ent->y < GAMEH){
-				ent->vy = -2;
-				ent->vx = 2;
+			if(placeFree(ent->x+4,ent->y+4) && ent->x < GAMEW - 32 && ent->y < GAMEH - 32){
+				ent->y += 2;
+				ent->x += 2;
 			}else{
-				ent->dir = 3;
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 1;
+				}else if(r == 2){
+					ent->dir = 0;
+				}else{
+					ent->dir = 3;
+				}
 			}
 		}else{
 			ent->vx = 0;
-			if(placeFree(ent->x+2,ent->y+2) && ent->x < GAMEW && ent->y < GAMEH){
-				ent->vy= 2;
-				ent->vx = 2;
+			if(placeFree(ent->x-4,ent->y+4) && ent->x > 0  && ent->y < GAMEH - 32){
+				ent->y -= 2;
+				ent->x += 2;
 			}else{
-				ent->dir = 2;
+				r = rand()%3;
+				if(r == 1){
+					ent->dir = 1;
+				}else if(r == 2){
+					ent->dir = 2;
+				}else{
+					ent->dir = 0;
+				}
 			}
 		}
-		ent->x += ent->vx;
-		ent->y += ent->vy;
 	}else if(ent->enemy == E_PHASE){
 		if(ent->dir == 0){
+			ent->vx = -4;
 			ent->vy = 0;
-			ent->y = 0;
 			if(ent->x < -(ent->w)){
 				ent->x = GAMEW;
 			}
@@ -650,22 +676,22 @@ void EnemyThink(Entity *ent){
 		}
 	}else if(ent->enemy == E_DISP){
 		ent->curTimer += 1;
-		if(ent->curTimer >= ent->timer+60){
+		if(ent->curTimer >= ent->timer+15){
 			r = rand()%4;
 			if(r == 0){
-				if(ent->x-32 >= 0){
+				if(ent->x-32 >= 0 && placeFree(ent->x - 32, ent->y)){
 					ent->x -= 32;
 				}
 			}else if(r == 1){
-				if(ent->x+32 <= GAMEW-32){
+				if(ent->x+32 <= GAMEW-32 && placeFree(ent->x + 32, ent->y)){
 					ent->x += 32;
 				}
 			}else if(r == 2){
-				if(ent->y-32 >= 0){
+				if(ent->y-32 >= 0 && placeFree(ent->x, ent->y - 32)){
 					ent->y -= 32;
 				}
 			}else{
-				if(ent->y + 32 >= GAMEH-32){
+				if(ent->y + 32 >= GAMEH-32 && placeFree(ent->x, ent->y + 32)){
 					ent->y += 32;
 				}
 			}
@@ -830,7 +856,7 @@ void SpawnThink(Entity *s){
 	s->curTimer += 1;
 	if(s->curTimer > s->timer && numEnems < mEnem){
 		r = rand()%100;
-		ss = LoadSprite("spr_enemy.png",32,32,1);
+		ss = LoadSprite("_img/spr_enemy.png",32,32,1);
 		if(r >= 0 && r < 20){
 			t = E_STRT;
 		}else if(r >= 20 && r < 40){
@@ -838,7 +864,7 @@ void SpawnThink(Entity *s){
 		}else if(r >= 40 && r < 60){
 			t = E_SNAKE;
 		}else if(r >= 60 && r < 80){
-			t = E_DIAG;
+			t = E_DIAGC;
 		}else{
 			t = E_DISP;
 		}

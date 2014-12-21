@@ -30,7 +30,7 @@ enum POS{
 
 //Though, let's be real, if I'm randomizing what enemies can come out, this is problematic
 enum ENTYPE{
-	E_STRT, E_DIAG, E_WEP, E_PHASE, E_SNAKE, E_BOX, E_CPY, E_DISP
+	E_STRT, E_DIAGC, E_DIAGCC, E_WEP, E_PHASE, E_SNAKE, E_BOX, E_CPY, E_DISP
 };
 
 //Entity types (SC represents Scene)

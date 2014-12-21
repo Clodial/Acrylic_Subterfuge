@@ -156,7 +156,7 @@ int main(int argc, char *argv[]){
 			e1 = CreateEnemy(160,160,spr,E_PHASE,9,5);
 		}else if(keys[SDLK_t]){
 			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
-			e1 = CreateEnemy(160,160,spr,E_DIAG,9,5);
+			e1 = CreateEnemy(160,160,spr,E_DIAGC,9,5);
 		}else if(keys[SDLK_y]){
 			spr = LoadSprite("_img/spr_enemy.png",32,32,1);
 			e1 = CreateEnemy(160,160,spr,E_SNAKE,9,5);
@@ -364,6 +364,7 @@ int main(int argc, char *argv[]){
 						}
 					}
 				}
+				//printf("number of uses: %i\n", );
 				playa->curTimer = 0;
 			}
 		}else if(keys[SDLK_DOWN]){
