@@ -73,7 +73,7 @@ void InitParts(){
 	numEffs = 0;
 	curPower = P_NORM;
 	level = 0;
-	mEnem = 5;
+	mEnem = 2;
 	ww = 1;
 	chLvlT = 0;
 	chLvl = 120;
@@ -112,7 +112,7 @@ void UpdateParts(){
 	Sprite *spr;
 
 	printf("numEnems: %i, Max Enemies: %i\n",numEnems, mEnem);
-	curDirSwT += 1;
+	//curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
 		if(direction > 3){
@@ -465,7 +465,6 @@ Entity *CreateSpawn(int x, int y, Sprite *s){
 	spawn->frame = 0;
 	spawn->timer = 120;
 	spawn->curTimer = 0;
-	spawn->curTimer = 0;
 	spawn->think = SpawnThink;
 
 	return spawn;
@@ -502,6 +501,8 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 	}
 	enemy->think = EnemyThink;
 	enemy->frame = 0;
+	enemy->fTimer = 30;
+	enemy->curFtimer = 0;
 	enemy->numFrames = nF;
 	enemy->type = S_ENEMY;
 	return enemy;
@@ -509,6 +510,20 @@ Entity *CreateEnemy(int x, int y, Sprite *s, int type, int nF,int hp){
 void EnemyThink(Entity *ent){
 	int r;
 	//Determining vx and vy for enemy types E_STRT, E_PHASE, E_SNAKE, and E_DISP
+	ent->curFtimer+= 1;
+	if(ent->curFtimer >= ent->fTimer){
+		//So it hits every frame in the sequence
+		if(ent->frame < ent->numFrames-1){
+			ent->frame += 1;
+		}else{
+			ent->frame = 0;
+		}
+		ent->curFtimer = 0;
+	}
+	if(ent->hp == 0){
+		killCount += 1;
+		DestEnems(ent);
+	}
 	if(ent->enemy == E_STRT){
 		if(ent->dir == 0){
 			ent->vy = 0;
@@ -698,6 +713,10 @@ void EnemyThink(Entity *ent){
 			ent->curTimer = 0;
 		}
 	}
+	if(playa->x < ent->x + ent->w && playa->x + playa->w > ent->x && playa->y < ent->y + ent->h && playa->y + playa->h > ent->y){
+		playa->hp -= 1;
+		DestEnems(ent);
+	}
 }
 void PlayerThink(Entity *self){
 
@@ -736,6 +755,7 @@ void PlayerThink(Entity *self){
 }
 void BulletThink(Entity *ent){
 
+	int i;
 	Sprite *spr;
 	Entity *e;
 
@@ -743,10 +763,18 @@ void BulletThink(Entity *ent){
 		if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
 			DestBull(ent);
 		}
+		for(i = 0; i< MAXENEMIES; i += 1){
+			if(EnemList[i].used){
+				if(EnemList[i].x < ent->x + ent->w && EnemList[i].x + EnemList[i].w > ent->x && EnemList[i].y < ent->y + ent->h && EnemList[i].y + EnemList[i].h > ent->y){
+					EnemList[i].hp -= 1;
+					DestBull(ent);
+				}	
+			}
+		}
 		ent->x += ent->vx;
 		ent->y += ent->vy;
 	}else if(ent->weapon == W_ROCK){
-		if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
+		if(placeFree2(ent->x+ent->vx,ent->y+ent->vy,ent->w,ent->h) == 0 || placeFree3(ent->x+ent->vx,ent->y+ent->vx,ent->w,ent->h) ||ent->x > GAMEW || ent->y > GAMEH || ent->x < -16 || ent->y < -16){
 			spr = LoadSprite("_img/spr_bP.png",16,16,1);
 			if(ent->vx > 0){
 				e = CreateBullet(ent->x-16,ent->y,spr,0,4,40,W_NORM);
@@ -856,7 +884,7 @@ void SpawnThink(Entity *s){
 	s->curTimer += 1;
 	if(s->curTimer > s->timer && numEnems < mEnem){
 		r = rand()%100;
-		ss = LoadSprite("_img/spr_enemy.png",32,32,1);
+		ss = LoadSprite("_img/spr_enemy.png",32,32,9);
 		if(r >= 0 && r < 20){
 			t = E_STRT;
 		}else if(r >= 20 && r < 40){
@@ -1094,6 +1122,20 @@ int placeFree2(int x, int y, int w, int h){
 		if(WallList[i].used){
 			if(WallList[i].x < x + w && WallList[i].x + WallList[i].w > x && WallList[i].y < y + h && WallList[i].y + WallList[i].h > y)
 			return 0;
+		}
+	}
+	return 1;
+}
+int placeFree3(int x, int y, int w, int h){
+	//This is between bullets and enemies
+	int cx,cy,cx2,cy2;
+	int bx,by,bw,bh;
+	int i;
+
+	for(i = 0; i< MAXENEMIES; i += 1){
+		if(EnemList[i].used){
+			if(EnemList[i].x < x + w && EnemList[i].x + EnemList[i].w > x && EnemList[i].y < y + h && EnemList[i].y + EnemList[i].h > y)
+				return 0;
 		}
 	}
 	return 1;

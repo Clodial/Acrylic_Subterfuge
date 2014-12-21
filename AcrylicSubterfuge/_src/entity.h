@@ -13,7 +13,7 @@
 #define LAYERS 3
 #define MAXWALLS 13
 #define MAXBULLETS 128
-#define MAXENEMIES 20
+#define MAXENEMIES 6
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
