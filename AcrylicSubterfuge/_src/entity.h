@@ -13,7 +13,7 @@
 #define LAYERS 3
 #define MAXWALLS 13
 #define MAXBULLETS 128
-#define MAXENEMIES 6
+#define MAXENEMIES 11
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
 enum POS{
@@ -30,7 +30,7 @@ enum POS{
 
 //Though, let's be real, if I'm randomizing what enemies can come out, this is problematic
 enum ENTYPE{
-	E_STRT, E_DIAGC, E_DIAGCC, E_WEP, E_PHASE, E_SNAKE, E_BOX, E_CPY, E_DISP
+	E_STRT, E_DIAGC, E_DIAGCC, E_WEP, E_PHASE, E_SNAKE, E_BOX, E_CPY, E_DISP, E_CHAD
 };
 
 //Entity types (SC represents Scene)
@@ -41,7 +41,7 @@ enum SCTYPE{
 //affects state of the game, as well
 enum POWUP{
 	//powerups can only be rockets, shotguns, mines, lasers, lvlds, whitewashes, and lvlus
-	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_KEEP, P_LVLU, P_LVLD, P_WHITE 
+	P_NORM, P_ROCK, P_SHOT, P_MINE, P_LASER, P_KEEP, P_LVLU, P_LVLD, P_WHITE, P_LVL5, P_LVL1
 };
 enum DIR{
 	D_RIGHT, D_LEFT, D_UP, D_DOWN
@@ -65,7 +65,7 @@ typedef struct Ent{
 	int				type;	
 	int 			hp;
 
-	int				solid;
+	int				active;
 
 	int				power;	//current powerup
 	int				weapon; //weapon
@@ -84,7 +84,8 @@ typedef struct Ent{
 	int				enemy;	//only used if SCTYPE = S_ENEMY
 	int 			frame;
 	int				numFrames;
-	int				used;	//	I'M NOT GONNA BLOW SHIT UP, AGAIN
+	int				used;	//	I'M NOT GONNA BLOW SHIT UP, AGAIN 
+
 	void			(*think)(struct Ent *self); //do on update
 	void			(*touch)(struct Ent *self, struct Ent *other); //when enemies touch player and when bullets hit 
 
@@ -102,6 +103,8 @@ typedef struct Eff{
 	int				curDir; //meant to change around directions and stuff
 
 	int				type;
+
+	int				lvlCh; // this is for the backgrounds to show level changes
 
 	int				curT;
 	int				timer;
@@ -160,6 +163,7 @@ void	LineEfThink(Effect *self);
 Effect *CreateSpecial(int x, int y, Sprite *sprite, int timer, int type); //for level 6 and whitewashes
 void	SpecThink(Effect *self);
 //extra functions
-int placeFree(int x, int y);//GAMEMAKER, no seriously... GAMEMAKER
-int placeFree2(int x, int y, int w, int h);
+int placeFree(int x, int y);//collisions between placed walls
+int placeFree2(int x, int y, int w, int h); //collisions between bullets and walls
+int placeFree3(int x, int y, int w, int h); // collisions between things and enemies
 #endif

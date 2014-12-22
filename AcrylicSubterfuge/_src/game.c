@@ -71,81 +71,13 @@ int main(int argc, char *argv[]){
 			}
 		}
 		if(keys[SDLK_a]){
-			if(playa->power != P_KEEP){
-				if(direction == 0){
-					if(placeFree(playa->x - 2,playa->y) && playa->x - 2 > 0)
-					playa->x -= 2;
-				}else if(direction == 1){
-					if(placeFree(playa->x,playa->y-2) && playa->y - 2 >0)
-					playa->y -= 2;
-				}else if(direction == 2){
-					if(placeFree(playa->x + 2,playa->y) && playa->x + 2 < GAMEW)
-					playa->x += 2;
-				}else{
-					if(placeFree(playa->x,playa->y+2) && playa->y +2 <GAMEH)
-					playa->y += 2;
-				}
-			}else{
-				if(placeFree(playa->x - 2,playa->y) && playa->x - 2 > 0)
-					playa->x -= 2;
-			}
+			playa->dir = 0;
 		}else if(keys[SDLK_d]){
-			if(playa->power != P_KEEP){
-				if(direction == 0){
-					if(placeFree(playa->x + 2,playa->y) && playa->y - 2 < GAMEW)
-					playa->x += 2;
-				}else if(direction == 1){
-					if(placeFree(playa->x,playa->y+2) && playa->y + 2 < GAMEH)
-					playa->y += 2;
-				}else if(direction == 2){
-					if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
-					playa->x -= 2;
-				}else{
-					if(placeFree(playa->x,playa->y-2) && playa->y-2 > 0)
-					playa->y -= 2;
-				}
-			}else{
-				if(placeFree(playa->x + 2,playa->y) && playa->y - 2 < GAMEW)
-					playa->x += 2;
-			}
+			playa->dir = 2;
 		}else if(keys[SDLK_w]){
-			if(playa->power != P_KEEP){
-				if(direction == 0){
-					if(placeFree(playa->x,playa->y - 2) && playa->y-2 > 0)
-					playa->y -= 2;
-				}else if(direction == 1){
-					if(placeFree(playa->x + 2,playa->y) && playa->x+34 < GAMEW)
-					playa->x += 2;
-				}else if(direction == 2){
-					if(placeFree(playa->x,playa->y + 2) && playa->y+34 < GAMEH)
-					playa->y += 2;
-				}else{
-					if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
-					playa->x -= 2;
-				}
-			}else{
-				if(placeFree(playa->x,playa->y - 2) && playa->y-2 > 0)
-					playa->y -= 2;
-			}
+			playa->dir = 1;
 		}else if(keys[SDLK_s]){
-			if(playa->power != P_KEEP){
-				if(direction == 0){
-					if(placeFree(playa->x,playa->y + 2) && playa->y+2 < GAMEH)
-					playa->y += 2;
-				}else if(direction == 1){
-					if(placeFree(playa->x - 2,playa->y) && playa->x-2 > 0)
-					playa->x -= 2;
-				}else if(direction == 2){
-					if(placeFree(playa->x,playa->y - 2) && playa->y-2 > 0)
-					playa->y -= 2;
-				}else{
-					if(placeFree(playa->x + 2,playa->y) && playa->x+2 < GAMEW)
-					playa->x += 2;
-				}
-			}else{
-				if(placeFree(playa->x,playa->y + 2) && playa->y+2 < GAMEH)
-					playa->y += 2;
-			}
+			playa->dir = 3;
 		}
 
 		if(keys[SDLK_e]){
