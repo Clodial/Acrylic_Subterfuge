@@ -48,28 +48,9 @@ int main(int argc, char *argv[]){
 		}else if(keys[SDLK_4]){
 			curPower = P_MINE;
 		}else if(keys[SDLK_5]){
-			curPower = P_LASER;
-		}else if(keys[SDLK_6]){
-			curPower = P_WHITE;
-			if(ww != 1)
-				ww = 1;
-		}else if(keys[SDLK_7]){
-			curPower = P_KEEP;
-		}else if(keys[SDLK_8]){
-			if(level == 0){
-				level = 1;
-			}if(level == 1){
-				level = 2;	
-			}if(level == 2){
-				level = 3;	
-			}if(level == 3){
-				level = 4;	
-			}if(level == 4){
-				level = 5;	
-			}else{
-				killCount = 0;	
-			}
+			curPower = P_PHASER;
 		}
+
 		if(keys[SDLK_a]){
 			playa->dir = 0;
 		}else if(keys[SDLK_d]){
@@ -111,16 +92,16 @@ int main(int argc, char *argv[]){
 						}else{
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,10,W_NORM);
 						}
-					}else if(playa->power == P_LASER){
+					}else if(playa->power == P_PHASER){
 						spr = LoadSprite("_img/spr_bPL.png",16,16,1);
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_PHASE);
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_PHASE);
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_PHASE);
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_PHASE);
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -178,16 +159,16 @@ int main(int argc, char *argv[]){
 						}else{
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,10,W_NORM);
 						}
-					}else if(playa->power == P_LASER){
+					}else if(playa->power == P_PHASER){
 						spr = LoadSprite("_img/spr_bPL.png",16,16,1);
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_PHASE);
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_PHASE);
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_PHASE);
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_PHASE);
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -245,16 +226,16 @@ int main(int argc, char *argv[]){
 						}else{
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,10,W_NORM);
 						}
-					}else if(playa->power == P_LASER){
+					}else if(playa->power == P_PHASER){
 						spr = LoadSprite("_img/spr_bPL.png",16,16,1);
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_PHASE);
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_PHASE);
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_PHASE);
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_PHASE);
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -313,16 +294,16 @@ int main(int argc, char *argv[]){
 						}else{
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,10,W_NORM);
 						}
-					}else if(playa->power == P_LASER){
+					}else if(playa->power == P_PHASER){
 						spr = LoadSprite("_img/spr_bPL.png",16,16,1);
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,8,60,W_PHASE);
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,0,60,W_PHASE);
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,0,-8,60,W_PHASE);
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_LASER);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,0,60,W_PHASE);
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);

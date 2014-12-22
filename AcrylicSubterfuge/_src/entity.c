@@ -80,13 +80,13 @@ void InitParts(){
 	numEffs = 0;
 	lvlCounter = 0;
 	curPower = P_NORM;
-	level = 4;
+	level = 0;
 	mEnem = 2;
 	ww = 1;
-	chLvl = 960;
+	chLvl = 1800;
 	wb = 1;
 	powCh = 0;
-	powT = 240;
+	powT = 480;
 
 
 	for(i = 0; i < MAXENTITIES; i++){
@@ -121,7 +121,7 @@ void UpdateParts(){
 	Effect *ef;
 	Sprite *spr;
 
-	curDirSwT += 1;
+	//curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
 		if(direction > 3){
@@ -134,7 +134,7 @@ void UpdateParts(){
 		level += 1;
 		lvlCounter = 0;
 	}
-	powCh += 1;
+	//powCh += 1;
 	if(powCh >= powT){
 		r = rand()%11;
 		if(r == 0){
@@ -171,22 +171,22 @@ void UpdateParts(){
 		powCh = 0;
 	}	
 	if(level == 0){
-		dirSwitchT = 90;
+		dirSwitchT = 480;
 		mEnem = 2;
 	}else if(level == 1){
-		dirSwitchT = 80;
+		dirSwitchT = 360;
 		mEnem = 3;
 	}else if(level == 2){
-		dirSwitchT = 70;
+		dirSwitchT = 240;
 		mEnem = 4;
 	}else if(level == 3){
-		dirSwitchT = 60;
+		dirSwitchT = 120;
 		mEnem = 6;
 	}else if(level == 4){
-		dirSwitchT = 50;
+		dirSwitchT = 90;
 		mEnem = 8;
 	}else if(level == 5){
-		dirSwitchT = 40;
+		dirSwitchT = 80;
 		mEnem = 10;
 	} 
 
@@ -820,7 +820,7 @@ void PlayerThink(Entity *self){
 				self->sprite = LoadSprite("_img/spr_pShot.png",32,32,6);
 			}else if(curPower == P_MINE){
 				self->sprite = LoadSprite("_img/spr_pMine.png",32,32,6);
-			}else if(curPower == P_LASER){
+			}else if(curPower == P_PHASER){
 				self->sprite = LoadSprite("_img/spr_pLaser.png",32,32,6);
 			}else if(curPower == P_KEEP){
 				self->sprite = LoadSprite("_img/spr_pSame.png",32,32,6);
@@ -1004,6 +1004,39 @@ void BulletThink(Entity *ent){
 		if(ent->curTimer >= ent->timer){
 			DestBull(ent);	
 		}
+		for(i = 0; i< MAXENEMIES; i += 1){
+			if(EnemList[i].used){
+				if(EnemList[i].x < ent->x + ent->w && EnemList[i].x + EnemList[i].w > ent->x && EnemList[i].y < ent->y + ent->h && EnemList[i].y + EnemList[i].h > ent->y){
+					DestEnems(&EnemList[i]);
+					killCount += 1;
+					DestBull(ent);
+				}	
+			}
+		}
+	}else if(ent->weapon == W_PHASE){
+		if(ent->x < -(ent->w)){
+			ent->x = GAMEW + 16;
+		}
+		if(ent->x > GAMEW + 16){
+			ent->x = -(ent->w);
+		}
+		if(ent->y < -(ent->h)){
+			ent->y = GAMEH + 16;
+		}
+		if(ent->y > GAMEH + 16){
+			ent->y = -(ent->h);
+		}
+		for(i = 0; i< MAXENEMIES; i += 1){
+			if(EnemList[i].used){
+				if(EnemList[i].x < ent->x + ent->w && EnemList[i].x + EnemList[i].w > ent->x && EnemList[i].y < ent->y + ent->h && EnemList[i].y + EnemList[i].h > ent->y){
+					DestEnems(&EnemList[i]);
+					killCount += 1;
+					DestBull(ent);
+				}	
+			}
+		}
+		ent->x += ent->vx;
+		ent->y += ent->vy;
 	}
 }
 void PowerThink(Entity *e){
@@ -1196,42 +1229,42 @@ void BGThink(Effect *eff){
 			}
 		}
 		eff->curDir = direction;
-		if(eff->lvlCh != level){
-			FreeSprite(eff->sprite);
-			if(level == 0){
-				if(direction == 0 || direction == 2){
-					eff->sprite = LoadSprite("_img/lvl1_horz.png",2112,352,1);
-				}else{
-					eff->sprite = LoadSprite("_img/lvl1_vert.png",352,2112,1);
-				}
-			}else if(level == 1){
-				if(direction == 0 || direction == 2){
-					eff->sprite = LoadSprite("_img/lvl2_horz.png",2112,352,1);
-				}else{
-					eff->sprite = LoadSprite("_img/lvl2_vert.png",352,2112,1);
-				}
-			}else if(level == 2){
-				if(direction == 0 || direction == 2){
-					eff->sprite = LoadSprite("_img/lvl3_horz.png",2112,352,1);
-				}else{
-					eff->sprite = LoadSprite("_img/lvl3_vert.png",352,2112,1);
-				}
-			}else if(level == 3){
-				if(direction == 0 || direction == 2){
-					eff->sprite = LoadSprite("_img/lvl4_horz.png",2112,352,1);
-				}else{
-					eff->sprite = LoadSprite("_img/lvl4_vert.png",352,2112,1);
-				}
+	}
+	if(eff->lvlCh != level){
+		FreeSprite(eff->sprite);
+		if(level == 0){
+			if(direction == 0 || direction == 2){
+				eff->sprite = LoadSprite("_img/lvl1_horz.png",2112,352,1);
 			}else{
-				if(direction == 0 || direction == 2){
-					eff->sprite = LoadSprite("_img/lvl5_horz.png",2112,352,1);
-				}else{
-					eff->sprite = LoadSprite("_img/lvl5_vert.png",352,2112,1);
-				}
+				eff->sprite = LoadSprite("_img/lvl1_vert.png",352,2112,1);
+			}
+		}else if(level == 1){
+			if(direction == 0 || direction == 2){
+				eff->sprite = LoadSprite("_img/lvl2_horz.png",2112,352,1);
+			}else{
+				eff->sprite = LoadSprite("_img/lvl2_vert.png",352,2112,1);
+			}
+		}else if(level == 2){
+			if(direction == 0 || direction == 2){
+				eff->sprite = LoadSprite("_img/lvl3_horz.png",2112,352,1);
+			}else{
+				eff->sprite = LoadSprite("_img/lvl3_vert.png",352,2112,1);
+			}
+		}else if(level == 3){
+			if(direction == 0 || direction == 2){
+				eff->sprite = LoadSprite("_img/lvl4_horz.png",2112,352,1);
+			}else{
+				eff->sprite = LoadSprite("_img/lvl4_vert.png",352,2112,1);
+			}
+		}else{
+			if(direction == 0 || direction == 2){
+				eff->sprite = LoadSprite("_img/lvl5_horz.png",2112,352,1);
+			}else{
+				eff->sprite = LoadSprite("_img/lvl5_vert.png",352,2112,1);
 			}
 		}
-		eff->lvlCh = level;
 	}
+	eff->lvlCh = level;
 }
 void LineEfThink(Effect *eff){
 
