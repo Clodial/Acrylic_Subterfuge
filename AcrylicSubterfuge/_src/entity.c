@@ -686,7 +686,7 @@ void EnemyThink(Entity *ent){
 				ent->x = GAMEW;
 			}
 		}else if(ent->dir == 1){
-			ent->vy = 8;
+			ent->vx = 8;
 			ent->vy = 0;
 			if(ent->x > GAMEW){
 				r = rand()%11;
@@ -716,7 +716,6 @@ void EnemyThink(Entity *ent){
 		if(ent->dir == 0){
 			if(placeFree(ent->x - 4,ent->y) && ent->x > 0){
 				ent->x -= 4;
-				
 			}else{
 				r = rand()%2;
 				if(r == 1){
@@ -1094,17 +1093,80 @@ void SpawnThink(Entity *s){
 	if(s->curTimer > s->timer && numEnems < mEnem){
 		r = rand()%100;
 		ss = LoadSprite("_img/spr_enemy.png",32,32,9);
-		if(r >= 0 && r < 10){
-			t = E_STRT;
-		}else if(r >= 10 && r < 40){
-			t = E_PHASE;
-		}else if(r >= 40 && r < 50){
-			t = E_SNAKE;
-		}else if(r >= 50 && r < 80){
-			t = E_CHAD;
-		}else{
-			t = E_DISP;
+		if(level == 0){
+			if(r >= 0 && r < 40){
+				t = E_STRT;
+			}else if(r >= 40 && r < 45){
+				t = E_PHASE;
+			}else if(r >= 45 && r < 90){
+				t = E_SNAKE;
+			}else if(r >= 90 && r < 95){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
+		}else if(level == 1){
+			if(r >= 0 && r < 30){
+				t = E_STRT;
+			}else if(r >= 30 && r < 40){
+				t = E_PHASE;
+			}else if(r >= 40 && r < 80){
+				t = E_SNAKE;
+			}else if(r >= 80 && r < 85){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
+		}else if(level == 2){
+			if(r >= 0 && r < 25){
+				t = E_STRT;
+			}else if(r >= 25 && r < 40){
+				t = E_PHASE;
+			}else if(r >= 40 && r < 70){
+				t = E_SNAKE;
+			}else if(r >= 70 && r < 80){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
+		}else if(level == 3){
+			if(r >= 0 && r < 20){
+				t = E_STRT;
+			}else if(r >= 20 && r < 40){
+				t = E_PHASE;
+			}else if(r >= 40 && r < 60){
+				t = E_SNAKE;
+			}else if(r >= 60 && r < 75){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
+		}else if(level == 4){
+			if(r >= 0 && r < 15){
+				t = E_STRT;
+			}else if(r >= 15 && r < 40){
+				t = E_PHASE;
+			}else if(r >= 40 && r < 55){
+				t = E_SNAKE;
+			}else if(r >= 55 && r < 80){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
+		}else if(level == 5){
+			if(r >= 0 && r < 5){
+				t = E_STRT;
+			}else if(r >= 5 && r < 40){
+				t = E_PHASE;
+			}else if(r >= 40 && r < 45){
+				t = E_SNAKE;
+			}else if(r >= 45 && r < 80){
+				t = E_CHAD;
+			}else{
+				t = E_DISP;
+			}
 		}
+		printf("enemy type: %i \n",t);
 		en = CreateEnemy(s->x,s->y,ss,t,9,5);
 		s->curTimer = 0;
 	}
