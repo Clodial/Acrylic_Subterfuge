@@ -121,7 +121,7 @@ void UpdateParts(){
 	Effect *ef;
 	Sprite *spr;
 
-	//curDirSwT += 1;
+	curDirSwT += 1;
 	if(curDirSwT >= dirSwitchT){
 		direction += 1;
 		if(direction > 3){
@@ -134,7 +134,7 @@ void UpdateParts(){
 		level += 1;
 		lvlCounter = 0;
 	}
-	//powCh += 1;
+	powCh += 1;
 	if(powCh >= powT){
 		r = rand()%11;
 		if(r == 0){
@@ -144,7 +144,9 @@ void UpdateParts(){
 		}else if(r == 2){
 			curPower = P_SHOT;
 		}else if(r == 3){
+			curPower = P_NORM;
 		}else if(r == 4){
+			curPower = P_NORM;
 		}else if(r == 5){
 			curPower = P_KEEP;
 		}else if(r == 6){
@@ -162,8 +164,13 @@ void UpdateParts(){
 			if(ww != 1)
 				ww = 1;
 		}else if(r == 9){
+			if(level != 5)
 			curPower = P_NORM;
-			level = 5;
+			if(level != 5){
+				level = 5;
+			}else{
+				level = 0;
+			}
 		}else if(r == 10){
 			curPower = P_NORM;
 			level = 0;
@@ -840,11 +847,11 @@ void PlayerThink(Entity *self){
 					self->y -= 4;
 				}
 			}else if(direction == 2){
-				if(placeFree(self->x + 4,self->y) && self->x+32 > GAMEW){
+				if(placeFree(self->x + 4,self->y) && self->x+32 < GAMEW){
 					self->x += 4;
 				}
 			}else if(direction == 3){
-				if(placeFree(self->x,self->y + 4) && self->x > GAMEH){
+				if(placeFree(self->x,self->y + 4) && self->y+32 < GAMEH){
 					self->y += 4;
 				}
 			}

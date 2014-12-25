@@ -31,7 +31,7 @@ void Init_Graphics()
     Uint32 HWflag = 0;
     SDL_Surface *temp;
     S_Data.xres = 352;
-    S_Data.yres = 352;
+    S_Data.yres = 448;
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;
@@ -49,26 +49,26 @@ void Init_Graphics()
         exit(1);
     }
     atexit(SDL_Quit);
-    if(SDL_VideoModeOK(352, 352, 32, SDL_ANYFORMAT | SDL_HWSURFACE))
+    if(SDL_VideoModeOK(352, 448, 32, SDL_ANYFORMAT | SDL_HWSURFACE))
     {
         S_Data.xres = 352;
-        S_Data.yres = 352;
+        S_Data.yres = 448;
         S_Data.depth = 32;
         Vflags = SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(352, 352, 16, SDL_ANYFORMAT | SDL_HWSURFACE))
+    else if(SDL_VideoModeOK(352, 448, 16, SDL_ANYFORMAT | SDL_HWSURFACE))
     {
         S_Data.xres = 352;
-        S_Data.yres = 352;
+        S_Data.yres = 448;
         S_Data.depth = 16;
         Vflags = SDL_ANYFORMAT | SDL_HWSURFACE;
         HWflag = SDL_HWSURFACE;
     }
-    else if(SDL_VideoModeOK(352, 352, 16, SDL_ANYFORMAT))
+    else if(SDL_VideoModeOK(352, 448, 16, SDL_ANYFORMAT))
     {
         S_Data.xres = 352;
-        S_Data.yres = 352;
+        S_Data.yres = 448;
         S_Data.depth = 16;
         Vflags = SDL_ANYFORMAT;
         HWflag = SDL_SWSURFACE;
@@ -169,6 +169,49 @@ Sprite *LoadSprite(char *filename,int sizex, int sizey, int numF)
     exit(0);
   }
   SpriteList[i].image = SDL_DisplayFormatAlpha(temp);
+  SDL_FreeSurface(temp);
+  /*sets a transparent color for blitting.*/
+  SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));
+   /*then copy the given information to the sprite*/
+  strncpy(SpriteList[i].filename,filename,20);
+      
+  SpriteList[i].framesperline = numF;
+  SpriteList[i].w = sizex;
+  SpriteList[i].h = sizey;
+  SpriteList[i].used++;
+  return &SpriteList[i];
+}
+Sprite *LoadSprite2(char *filename,int sizex, int sizey, int numF){
+  int i;
+  SDL_Surface *temp;
+  /*first search to see if the requested sprite image is alreday loaded*/
+  for(i = 0; i < NumSprites; i++)
+  {
+    if(strncmp(filename,SpriteList[i].filename,20)==0)
+    {
+      SpriteList[i].used++;
+      return &SpriteList[i];
+    }
+  }
+  /*makesure we have the room for a new sprite*/
+  if(NumSprites + 1 >= MaxSprites)
+  {
+        fprintf(stderr, "Maximum Sprites Reached.\n");
+        exit(1);
+  }
+  /*if its not already in memory, then load it.*/
+  NumSprites++;
+  for(i = 0;i <= NumSprites;i++)
+  {
+    if(!SpriteList[i].used)break;
+  }
+  temp = IMG_Load(filename);
+  if(temp == NULL)
+  {
+    fprintf(stderr,"unable to load a vital sprite: %s\n",SDL_GetError());
+    exit(0);
+  }
+  SpriteList[i].image = SDL_DisplayFormat(temp); //The only reason why I added a new LoadSprite function
   SDL_FreeSurface(temp);
   /*sets a transparent color for blitting.*/
   SDL_SetColorKey(SpriteList[i].image, SDL_SRCCOLORKEY , SDL_MapRGB(SpriteList[i].image->format, 255,255,255));

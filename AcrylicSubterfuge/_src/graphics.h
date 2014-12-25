@@ -78,6 +78,7 @@ void SwapSprite(SDL_Surface *sprite,int color1,int color2,int color3);
 void InitSpriteList();
 void FreeSprite(Sprite *img);
 Sprite *LoadSprite(char *filename,int sizex, int sizey, int numF);		/*simplest file to load*/
+Sprite *LoadSprite2(char *filename,int sizex, int sizey, int numF);		/*without alpha*/	
 Sprite *LoadSwappedSprite(char *filename,int sizex, int sizey, int c1, int c2, int c3);
 /*drawsprite and drawspritepart work the same except that Drawsprite will render an entire sprite on the desired srface
   and drawspritepart can have the size of the sprite specified.  Know your sprite when using DSP since you can in theory

@@ -12,7 +12,7 @@
 #define MAXSPEED 16
 #define LAYERS 3
 #define MAXWALLS 13
-#define MAXBULLETS 128
+#define MAXBULLETS 5
 #define MAXENEMIES 11
 
 //For Crazy Powerup effect 1 -> SPIN DA WORLD
@@ -112,6 +112,13 @@ typedef struct Eff{
 	void 			(*think)(struct Eff *self);
 }Effect;
 
+typedef struct Menu{
+	Sprite *sprite; //this is more for layering purposes
+	int				x,y,z;
+	int				used;
+	int				type;
+}Menu;
+
 void InitParts();
 void UpdateParts();
 void ClearAll();
@@ -150,6 +157,9 @@ void 	PowerSpawn();
 Entity *CreateSpawn(int x, int y, Sprite *sprite);
 void	SpawnThink(Entity *self);
 
+Entity *CreateExplosion(int x, int y, Sprite *sprite);
+void	ExThink(Entity *self);
+
 Entity *CreateEnemy(int x, int y, Sprite *sprite, int type, int nF, int hp);
 void	EnemyThink(Entity *self);
 void	EnemyTouch(Entity *self, Entity *other);
@@ -166,4 +176,15 @@ void	SpecThink(Effect *self);
 int placeFree(int x, int y);//collisions between placed walls
 int placeFree2(int x, int y, int w, int h); //collisions between bullets and walls
 int placeFree3(int x, int y, int w, int h); // collisions between things and enemies
+
+
+//to be used in menu.c
+Menu *NewMenu();
+void DestEnt(Menu *m);
+void DrawMenu(Menu *m);
+void DrawMenus();
+Menu	*CreateMainScreen(int x, int y);
+void	MSThink(Menu *m);
+Menu	*CreateBottomScreen(int x, int y);
+void	BSThink(Menu *m);
 #endif

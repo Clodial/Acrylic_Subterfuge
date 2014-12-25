@@ -105,30 +105,15 @@ int main(int argc, char *argv[]){
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
-						r1 = rand()%4-2;
-						r2 = rand()%4-2;
-						r3 = rand()%4-2;
-						r4 = rand()%4-2;
+						r1 = rand()%8-4;
 						if(direction == 0){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r4,10,W_NORM);
 						}else if(direction == 1){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,-8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,-8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,-8,10,W_NORM);
 						}else if(direction == 2){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,8,r4,10,W_NORM);
 						}else{
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,8,10,W_NORM);
 						}
 					}else if(playa->power == P_ROCK){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -172,30 +157,15 @@ int main(int argc, char *argv[]){
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
-						r1 = rand()%4-2;
-						r2 = rand()%4-2;
-						r3 = rand()%4-2;
-						r4 = rand()%4-2;
+						r1 = rand()%8-4;						
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,-8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,-8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,-8,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);							
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,8,r4,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,r1,10,W_NORM);							
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,8,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);							
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r4,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);							
 						}
 					}else if(playa->power == P_ROCK){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -239,30 +209,15 @@ int main(int argc, char *argv[]){
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
-						r1 = rand()%4-2;
-						r2 = rand()%4-2;
-						r3 = rand()%4-2;
-						r4 = rand()%4-2;
+						r1 = rand()%8-4;						
 						if(direction == 0){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,8,r4,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,8,r1,10,W_NORM);					
 						}else if(direction == 1){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,8,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);					
 						}else if(direction == 2){
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r4,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);			
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,-8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,-8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,-8,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);							
 						}
 					}if(playa->power == P_ROCK){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
@@ -307,30 +262,15 @@ int main(int argc, char *argv[]){
 						}
 					}else if(playa->power == P_SHOT){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
-						r1 = rand()%4-2;
-						r2 = rand()%4-2;
-						r3 = rand()%4-2;
-						r4 = rand()%4-2;
+						r1 = rand()%8-4;
 						if(direction == 0){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,8,10,W_NORM);
 						}else if(direction == 1){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r4,10,W_NORM);
 						}else if(direction == 2){
 							e1 = CreateBullet(playa->x+8,playa->y+8,spr,r1,-8,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,r2,-8,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,r3,-8,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,r4,-8,10,W_NORM);
 						}else{
-							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);
-							e2 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r2,10,W_NORM);
-							e3 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r3,10,W_NORM);
-							e4 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r4,10,W_NORM);
+							e1 = CreateBullet(playa->x+8,playa->y+8,spr,-8,r1,10,W_NORM);							
 						}
 					}else if(playa->power == P_ROCK){
 						spr = LoadSprite("_img/spr_bP.png",16,16,1);
